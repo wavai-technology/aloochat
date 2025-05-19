@@ -52,4 +52,75 @@ debug_worker:
 docker: 
 	docker build -t $(APP_NAME) -f ./docker/Dockerfile .
 
-.PHONY: setup db_create db_migrate db_seed db_reset db console server burn docker run force_run debug debug_worker
+# Local Development with Docker
+#
+# Docker Setup Pre-requisites:
+# Before proceeding, make sure you have the latest version of docker and docker-compose installed.
+# Recommended versions:
+# - Docker version 25.0.4 or higher
+# - Docker Compose version 2.24.7 or higher
+#
+# Development workflow:
+# 1. Clone the repository: git clone https://github.com/chatwoot/chatwoot.git
+# 2. Copy .env.example to .env and update Redis and Postgres passwords
+# 3. Build the images using the commands below
+# 4. Prepare the database using dev-prepare
+# 5. Start the application using dev-up or dev-start
+# 6. Access the app at http://localhost:3000
+#    - Default login: john@acme.inc / Password1!
+# 7. Access Mailhog at http://localhost:8025
+
+# Copy environment file
+dev-env:
+	cp -n .env.example .env
+	@echo "Please update Redis and Postgres passwords in .env file"
+	@echo "Also update docker-compose.yaml with the same Postgres password if needed"
+
+# Build the base image first, then build all services
+dev-setup:
+	docker compose build base
+	docker compose build
+
+# Start the application in development mode (interactive)
+dev-start:
+	docker compose up
+
+# Start the application in detached mode
+dev-up:
+	docker compose up -d
+
+# Stop the application
+dev-down:
+	docker compose down
+
+# Prepare the database (reset and setup)
+dev-prepare:
+	docker compose run --rm rails bundle exec rails db:chatwoot_prepare
+
+# Execute database migrations
+dev-migrate:
+	docker compose run --rm rails bundle exec rails db:migrate
+
+# Full setup: build, prepare DB, and start
+dev-init: dev-setup dev-prepare dev-up
+	@echo "Application is now running at http://localhost:3000"
+	@echo "Login with: john@acme.inc / Password1!"
+	@echo "Mailhog is available at http://localhost:8025"
+
+# View logs from all containers or a specific service
+dev-logs:
+	@if [ -z "$(service)" ]; then \
+		docker compose logs -f; \
+	else \
+		docker compose logs -f $(service); \
+	fi
+
+# Access Rails console in the running container
+dev-console:
+	docker compose run --rm rails bundle exec rails console
+
+# Production 
+# db_prepare:
+# 	docker compose run --rm rails bundle exec rails db:chatwoot_prepare
+
+.PHONY: setup db_create db_migrate db_seed db_reset db console server burn docker run force_run debug debug_worker dev-setup dev-up dev-down dev-migrate dev-init dev-logs dev-console
