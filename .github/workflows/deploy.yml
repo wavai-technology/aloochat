@@ -116,7 +116,10 @@ jobs:
       
       - name: Configure kubectl
         run: |
-          doctl kubernetes cluster kubeconfig save chatwoot-cluster
+          # Wait for cluster to be ready after Terraform creates it
+          echo "Waiting for cluster to be ready..."
+          sleep 30
+          doctl kubernetes cluster kubeconfig save chatwoot-cluster || echo "Cluster not ready yet, will retry after Terraform apply"
       
       - name: Create terraform.tfvars
         run: |
@@ -135,6 +138,12 @@ jobs:
         run: |
           cd terraform
           terraform apply -auto-approve
+      
+      - name: Wait for cluster and configure kubectl
+        run: |
+          echo "Waiting for cluster to be ready after Terraform apply..."
+          sleep 60
+          doctl kubernetes cluster kubeconfig save chatwoot-cluster
       
       - name: Create ConfigMap from template
         run: |
