@@ -1,0 +1,192 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+
+env:
+  # Docker Registry Configuration
+  DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  # Application Configuration
+  ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+  SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+
+  # SMTP Configuration
+  SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+  SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2.2'
+          bundler-cache: true
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install
+          pnpm install
+      
+      - name: Run tests
+        run: |
+          bundle exec rspec
+          bundle exec rubocop
+
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Login to Docker Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD }}
+      
+      - name: Build and push base image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./docker/Dockerfile
+          push: true
+          tags: ${{ env.DOCKER_REGISTRY }}/chatwoot-base:latest
+      
+      - name: Build and push Rails image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./docker/dockerfiles/rails.Dockerfile
+          push: true
+          tags: ${{ env.DOCKER_REGISTRY }}/chatwoot-rails:latest
+      
+      - name: Build and push Vite image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./docker/dockerfiles/vite.Dockerfile
+          push: true
+          tags: ${{ env.DOCKER_REGISTRY }}/chatwoot-vite:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_TOKEN }}
+      
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.5.0"
+      
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+      
+      - name: Configure kubectl
+        run: |
+          doctl kubernetes cluster kubeconfig save chatwoot-cluster
+      
+      - name: Create terraform.tfvars
+        run: |
+          cat > terraform/terraform.tfvars << EOL
+          do_token = "${{ secrets.DO_TOKEN }}"
+          region = "${{ secrets.REGION }}"
+          environment = "${{ secrets.ENVIRONMENT }}"
+          EOL
+      
+      - name: Terraform Init
+        run: |
+          cd terraform
+          terraform init
+      
+      - name: Terraform Apply
+        run: |
+          cd terraform
+          terraform apply -auto-approve
+      
+      - name: Get Database Credentials
+        id: db-creds
+        run: |
+          cd terraform
+          echo "POSTGRES_HOST=$(terraform output -raw postgres_host)" >> $GITHUB_ENV
+          echo "POSTGRES_PORT=$(terraform output -raw postgres_port)" >> $GITHUB_ENV
+          echo "POSTGRES_DB=$(terraform output -raw postgres_database)" >> $GITHUB_ENV
+          echo "POSTGRES_USER=$(terraform output -raw postgres_user)" >> $GITHUB_ENV
+          echo "POSTGRES_PASSWORD=$(terraform output -raw postgres_password)" >> $GITHUB_ENV
+          echo "REDIS_HOST=$(terraform output -raw redis_host)" >> $GITHUB_ENV
+          echo "REDIS_PORT=$(terraform output -raw redis_port)" >> $GITHUB_ENV
+          echo "REDIS_PASSWORD=$(terraform output -raw redis_password)" >> $GITHUB_ENV
+      
+      - name: Create ConfigMap from template
+        run: |
+          envsubst < k8s/configmap.yaml > k8s/configmap_generated.yaml
+      
+      - name: Create Secrets from template
+        run: |
+          envsubst < k8s/secrets.yaml > k8s/secrets_generated.yaml
+      
+      - name: Update Kubernetes ConfigMap
+        run: |
+          kubectl apply -f k8s/configmap_generated.yaml
+      
+      - name: Update Kubernetes Secrets
+        run: |
+          kubectl apply -f k8s/secrets_generated.yaml
+      
+      - name: Deploy Kubernetes Resources
+        run: |
+          kubectl apply -f k8s/mailhog-deployment.yaml
+          kubectl apply -f k8s/vite-deployment.yaml
+          kubectl apply -f k8s/sidekiq-deployment.yaml
+          kubectl apply -f k8s/rails-deployment.yaml
+          kubectl apply -f k8s/ingress.yaml
+      
+      - name: Wait for Deployment
+        run: |
+          kubectl rollout status deployment/chatwoot-rails
+          kubectl rollout status deployment/chatwoot-sidekiq
+          kubectl rollout status deployment/chatwoot-vite
+      
+      - name: Verify Deployment
+        run: |
+          kubectl get pods
+          kubectl get services
+          kubectl get ingress 

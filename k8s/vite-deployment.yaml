@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatwoot-vite
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chatwoot-vite
+  template:
+    metadata:
+      labels:
+        app: chatwoot-vite
+    spec:
+      containers:
+      - name: vite
+        image: chatwoot-vite:production
+        ports:
+        - containerPort: 3036
+        envFrom:
+        - configMapRef:
+            name: chatwoot-config
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatwoot-vite
+spec:
+  selector:
+    app: chatwoot-vite
+  ports:
+  - port: 3036
+    targetPort: 3036
+  type: ClusterIP 
