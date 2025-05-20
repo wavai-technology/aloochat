@@ -157,23 +157,21 @@ jobs:
       
       - name: Create Secrets from template
         run: |
-          cat > k8s/secrets_generated.yaml << EOL
-          apiVersion: v1
+          echo 'apiVersion: v1
           kind: Secret
           metadata:
             name: chatwoot-secrets
           type: Opaque
           data:
-            POSTGRES_HOST: $(echo -n "${{ secrets.POSTGRES_HOST }}" | base64)
-            POSTGRES_PORT: $(echo -n "${{ secrets.POSTGRES_PORT }}" | base64)
-            POSTGRES_DATABASE: $(echo -n "${{ secrets.POSTGRES_DATABASE }}" | base64)
-            POSTGRES_USERNAME: $(echo -n "${{ secrets.POSTGRES_USERNAME }}" | base64)
-            POSTGRES_PASSWORD: $(echo -n "${{ secrets.POSTGRES_PASSWORD }}" | base64)
-            REDIS_URL: $(echo -n "${{ secrets.REDIS_URL }}" | base64)
-            REDIS_PASSWORD: $(echo -n "${{ secrets.REDIS_PASSWORD }}" | base64)
-            REDIS_HOST: $(echo -n "${{ secrets.REDIS_HOST }}" | base64)
-            REDIS_PORT: $(echo -n "${{ secrets.REDIS_PORT }}" | base64)
-          EOL
+            POSTGRES_HOST: '"$(echo -n "${{ secrets.POSTGRES_HOST }}" | base64)"'
+            POSTGRES_PORT: '"$(echo -n "${{ secrets.POSTGRES_PORT }}" | base64)"'
+            POSTGRES_DATABASE: '"$(echo -n "${{ secrets.POSTGRES_DATABASE }}" | base64)"'
+            POSTGRES_USERNAME: '"$(echo -n "${{ secrets.POSTGRES_USERNAME }}" | base64)"'
+            POSTGRES_PASSWORD: '"$(echo -n "${{ secrets.POSTGRES_PASSWORD }}" | base64)"'
+            REDIS_URL: '"$(echo -n "${{ secrets.REDIS_URL }}" | base64)"'
+            REDIS_PASSWORD: '"$(echo -n "${{ secrets.REDIS_PASSWORD }}" | base64)"'
+            REDIS_HOST: '"$(echo -n "${{ secrets.REDIS_HOST }}" | base64)"'
+            REDIS_PORT: '"$(echo -n "${{ secrets.REDIS_PORT }}" | base64)"'' > k8s/secrets_generated.yaml
       
       - name: Update Kubernetes ConfigMap
         run: |
