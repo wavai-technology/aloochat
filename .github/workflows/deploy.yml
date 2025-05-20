@@ -114,6 +114,23 @@ jobs:
         with:
           version: 'latest'
       
+      - name: Check for existing cluster
+        id: check-cluster
+        run: |
+          if doctl kubernetes cluster list --format Name | grep -q "chatwoot-cluster"; then
+            echo "cluster_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "cluster_exists=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Delete existing cluster if needed
+        if: steps.check-cluster.outputs.cluster_exists == 'true'
+        run: |
+          echo "Deleting existing cluster..."
+          doctl kubernetes cluster delete chatwoot-cluster --force
+          echo "Waiting for cluster deletion..."
+          sleep 60
+      
       - name: Configure kubectl
         run: |
           # Wait for cluster to be ready after Terraform creates it
