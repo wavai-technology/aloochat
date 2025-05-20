@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: vite
-        image: ${{ env.DOCKER_USERNAME }}/chatwoot-vite:latest
+        image: wavai/chatwoot-vite:latest
         ports:
         - containerPort: 3036
         envFrom:

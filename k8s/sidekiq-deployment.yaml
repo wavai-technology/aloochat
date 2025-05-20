@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: sidekiq
-        image: ${{ env.DOCKER_USERNAME }}/chatwoot-rails:latest
+        image: wavai/chatwoot-rails:latest
         command: ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
         envFrom:
         - configMapRef:

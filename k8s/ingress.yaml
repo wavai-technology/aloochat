@@ -11,11 +11,8 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
 spec:
   tls:
-    - hosts:
-        - $(DOMAIN)
       secretName: chatwoot-tls
   rules:
-    - host: $(DOMAIN)
       http:
         paths:
           - path: /
