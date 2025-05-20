@@ -31,38 +31,6 @@ resource "digitalocean_kubernetes_cluster" "chatwoot" {
   }
 }
 
-# Managed PostgreSQL database
-resource "digitalocean_database_cluster" "postgres" {
-  name       = "chatwoot-db"
-  engine     = "pg"
-  version    = "16"
-  size       = "db-s-1vcpu-1gb"
-  region     = var.region
-  node_count = 1
-}
-
-# Managed Redis database
-resource "digitalocean_database_cluster" "redis" {
-  name       = "chatwoot-redis"
-  engine     = "redis"
-  version    = "7"
-  size       = "db-s-1vcpu-1gb"
-  region     = var.region
-  node_count = 1
-}
-
-# Database user
-resource "digitalocean_database_user" "postgres" {
-  cluster_id = digitalocean_database_cluster.postgres.id
-  name       = "chatwoot"
-}
-
-# Database database
-resource "digitalocean_database_db" "postgres" {
-  cluster_id = digitalocean_database_cluster.postgres.id
-  name       = "chatwoot"
-}
-
 # Firewall rules
 resource "digitalocean_firewall" "k8s" {
   name = "chatwoot-k8s-firewall"
