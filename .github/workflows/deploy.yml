@@ -159,8 +159,15 @@ jobs:
         run: |
           envsubst < k8s/ingress.yaml.template > k8s/ingress_generated.yaml
       
+      - name: Update Kubernetes ConfigMap
+        run: |
+          kubectl apply -f k8s/configmap.yaml
+      
       - name: Create Kubernetes Secrets
         run: |
+          # Delete existing secret if it exists
+          kubectl delete secret chatwoot-secrets --ignore-not-found=true
+          
           # Create a temporary file for the secret
           cat > secret.yaml << EOF
           apiVersion: v1
@@ -183,22 +190,14 @@ jobs:
             SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
           EOF
           
-          # Apply the secret
-          kubectl apply -f secret.yaml
+          # Create the secret
+          kubectl create -f secret.yaml
           
           # Clean up
           rm secret.yaml
       
-      - name: Update Kubernetes ConfigMap
-        run: |
-          kubectl apply -f k8s/configmap_generated.yaml
-      
       - name: Deploy to Kubernetes
         run: |
-          # Apply ConfigMap and Secrets
-          kubectl apply -f k8s/configmap.yaml
-          kubectl apply -f k8s/secrets.yaml
-          
           # Apply deployments and services
           kubectl apply -f k8s/rails-deployment.yaml
           kubectl apply -f k8s/web-deployment.yaml
