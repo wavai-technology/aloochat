@@ -17,7 +17,7 @@ spec:
         image: wavai/chatwoot-rails
         imagePullPolicy: Always
         command: ["/bin/sh"]
-        args: ["-c", "bundle install && bundle exec rails server -b 0.0.0.0"]
+        args: ["-c", "bundle install && bundle add devise-secure_password && bundle exec rails server -b 0.0.0.0"]
         ports:
         - containerPort: 3000
         envFrom:
