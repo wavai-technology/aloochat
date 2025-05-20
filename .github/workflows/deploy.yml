@@ -203,7 +203,6 @@ jobs:
           kubectl apply -f k8s/vite-deployment.yaml
           kubectl apply -f k8s/sidekiq-deployment.yaml
           kubectl apply -f k8s/mailhog-deployment.yaml
-          kubectl apply -f k8s/ingress.yaml
           
           # Wait for deployments with increased timeout
           echo "Waiting for Rails deployment..."
@@ -253,6 +252,10 @@ jobs:
           # Check services
           echo "Checking services..."
           kubectl get services
+          
+          # Apply Ingress after all services are ready
+          echo "Applying Ingress configuration..."
+          kubectl apply -f k8s/ingress.yaml
           
           # Check ingress
           echo "Checking ingress..."
