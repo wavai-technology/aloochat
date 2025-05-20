@@ -155,26 +155,23 @@ jobs:
         run: |
           envsubst < k8s/configmap.yaml > k8s/configmap_generated.yaml
       
-      - name: Create Secrets from template
+      - name: Create Kubernetes Secrets
         run: |
-          export POSTGRES_HOST=$(echo -n "${{ secrets.POSTGRES_HOST }}" | base64)
-          export POSTGRES_PORT=$(echo -n "${{ secrets.POSTGRES_PORT }}" | base64)
-          export POSTGRES_DATABASE=$(echo -n "${{ secrets.POSTGRES_DATABASE }}" | base64)
-          export POSTGRES_USERNAME=$(echo -n "${{ secrets.POSTGRES_USERNAME }}" | base64)
-          export POSTGRES_PASSWORD=$(echo -n "${{ secrets.POSTGRES_PASSWORD }}" | base64)
-          export REDIS_URL=$(echo -n "${{ secrets.REDIS_URL }}" | base64)
-          export REDIS_PASSWORD=$(echo -n "${{ secrets.REDIS_PASSWORD }}" | base64)
-          export REDIS_HOST=$(echo -n "${{ secrets.REDIS_HOST }}" | base64)
-          export REDIS_PORT=$(echo -n "${{ secrets.REDIS_PORT }}" | base64)
-          envsubst < k8s/secrets.yaml.template > k8s/secrets_generated.yaml
+          kubectl create secret generic chatwoot-secrets \
+            --from-literal=POSTGRES_HOST="${{ secrets.POSTGRES_HOST }}" \
+            --from-literal=POSTGRES_PORT="${{ secrets.POSTGRES_PORT }}" \
+            --from-literal=POSTGRES_DATABASE="${{ secrets.POSTGRES_DATABASE }}" \
+            --from-literal=POSTGRES_USERNAME="${{ secrets.POSTGRES_USERNAME }}" \
+            --from-literal=POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+            --from-literal=REDIS_URL="${{ secrets.REDIS_URL }}" \
+            --from-literal=REDIS_PASSWORD="${{ secrets.REDIS_PASSWORD }}" \
+            --from-literal=REDIS_HOST="${{ secrets.REDIS_HOST }}" \
+            --from-literal=REDIS_PORT="${{ secrets.REDIS_PORT }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
       
       - name: Update Kubernetes ConfigMap
         run: |
           kubectl apply -f k8s/configmap_generated.yaml
-      
-      - name: Update Kubernetes Secrets
-        run: |
-          kubectl apply -f k8s/secrets_generated.yaml
       
       - name: Deploy Kubernetes Resources
         run: |
