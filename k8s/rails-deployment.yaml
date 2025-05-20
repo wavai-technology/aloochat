@@ -16,6 +16,8 @@ spec:
       - name: rails
         image: wavai/chatwoot-rails
         imagePullPolicy: Always
+        command: ["bundle"]
+        args: ["exec", "rails", "server", "-b", "0.0.0.0"]
         ports:
         - containerPort: 3000
         envFrom:

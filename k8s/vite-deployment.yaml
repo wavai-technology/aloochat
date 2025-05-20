@@ -15,11 +15,16 @@ spec:
       containers:
       - name: vite
         image: wavai/chatwoot-vite
+        imagePullPolicy: Always
+        command: ["bundle"]
+        args: ["exec", "vite", "dev"]
         ports:
         - containerPort: 3036
         envFrom:
         - configMapRef:
             name: chatwoot-config
+        - secretRef:
+            name: chatwoot-secrets
         resources:
           requests:
             memory: "256Mi"
