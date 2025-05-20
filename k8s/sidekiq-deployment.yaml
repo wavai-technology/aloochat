@@ -16,7 +16,8 @@ spec:
       - name: sidekiq
         image: wavai/chatwoot-rails
         imagePullPolicy: Always
-        command: ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
+        command: ["/bin/sh"]
+        args: ["-c", "bundle install && bundle exec sidekiq -C config/sidekiq.yml"]
         envFrom:
         - configMapRef:
             name: chatwoot-config
