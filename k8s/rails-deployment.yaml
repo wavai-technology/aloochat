@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: rails
-        image: wavai/chatwoot-rails:latest
+        image: ${DOCKER_USERNAME}/chatwoot-rails:latest
         ports:
         - containerPort: 3000
         envFrom:
