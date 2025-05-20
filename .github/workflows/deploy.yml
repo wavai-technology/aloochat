@@ -200,8 +200,9 @@ jobs:
         run: |
           # Apply deployments and services
           kubectl apply -f k8s/rails-deployment.yaml
-          kubectl apply -f k8s/web-deployment.yaml
-          kubectl apply -f k8s/worker-deployment.yaml
+          kubectl apply -f k8s/vite-deployment.yaml
+          kubectl apply -f k8s/sidekiq-deployment.yaml
+          kubectl apply -f k8s/mailhog-deployment.yaml
           kubectl apply -f k8s/ingress.yaml
           
           # Wait for deployments with increased timeout
@@ -215,23 +216,33 @@ jobs:
             exit 1
           }
           
-          echo "Waiting for Web deployment..."
-          kubectl rollout status deployment/chatwoot-web --timeout=300s || {
-            echo "Web deployment failed. Checking status..."
-            kubectl get pods -l app=chatwoot-web
-            kubectl describe deployment chatwoot-web
+          echo "Waiting for Vite deployment..."
+          kubectl rollout status deployment/chatwoot-vite --timeout=300s || {
+            echo "Vite deployment failed. Checking status..."
+            kubectl get pods -l app=chatwoot-vite
+            kubectl describe deployment chatwoot-vite
             kubectl get events --sort-by='.lastTimestamp'
-            kubectl logs -l app=chatwoot-web --tail=100
+            kubectl logs -l app=chatwoot-vite --tail=100
             exit 1
           }
           
-          echo "Waiting for Worker deployment..."
-          kubectl rollout status deployment/chatwoot-worker --timeout=300s || {
-            echo "Worker deployment failed. Checking status..."
-            kubectl get pods -l app=chatwoot-worker
-            kubectl describe deployment chatwoot-worker
+          echo "Waiting for Sidekiq deployment..."
+          kubectl rollout status deployment/chatwoot-sidekiq --timeout=300s || {
+            echo "Sidekiq deployment failed. Checking status..."
+            kubectl get pods -l app=chatwoot-sidekiq
+            kubectl describe deployment chatwoot-sidekiq
             kubectl get events --sort-by='.lastTimestamp'
-            kubectl logs -l app=chatwoot-worker --tail=100
+            kubectl logs -l app=chatwoot-sidekiq --tail=100
+            exit 1
+          }
+          
+          echo "Waiting for Mailhog deployment..."
+          kubectl rollout status deployment/chatwoot-mailhog --timeout=300s || {
+            echo "Mailhog deployment failed. Checking status..."
+            kubectl get pods -l app=chatwoot-mailhog
+            kubectl describe deployment chatwoot-mailhog
+            kubectl get events --sort-by='.lastTimestamp'
+            kubectl logs -l app=chatwoot-mailhog --tail=100
             exit 1
           }
           
