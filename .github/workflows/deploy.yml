@@ -119,24 +119,11 @@ jobs:
         run: |
           if doctl kubernetes cluster list --format Name | grep -q "chatwoot-cluster"; then
             echo "cluster_exists=true" >> $GITHUB_OUTPUT
+            echo "Using existing cluster..."
+            doctl kubernetes cluster kubeconfig save chatwoot-cluster
           else
             echo "cluster_exists=false" >> $GITHUB_OUTPUT
           fi
-      
-      - name: Delete existing cluster if needed
-        if: steps.check-cluster.outputs.cluster_exists == 'true'
-        run: |
-          echo "Deleting existing cluster..."
-          doctl kubernetes cluster delete chatwoot-cluster --force
-          echo "Waiting for cluster deletion..."
-          sleep 60
-      
-      - name: Configure kubectl
-        run: |
-          # Wait for cluster to be ready after Terraform creates it
-          echo "Waiting for cluster to be ready..."
-          sleep 30
-          doctl kubernetes cluster kubeconfig save chatwoot-cluster || echo "Cluster not ready yet, will retry after Terraform apply"
       
       - name: Create terraform.tfvars
         run: |
@@ -152,11 +139,13 @@ jobs:
           terraform init
       
       - name: Terraform Apply
+        if: steps.check-cluster.outputs.cluster_exists == 'false'
         run: |
           cd terraform
           terraform apply -auto-approve
       
-      - name: Wait for cluster and configure kubectl
+      - name: Configure kubectl if cluster was just created
+        if: steps.check-cluster.outputs.cluster_exists == 'false'
         run: |
           echo "Waiting for cluster to be ready after Terraform apply..."
           sleep 60
