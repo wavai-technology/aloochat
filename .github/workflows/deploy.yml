@@ -176,6 +176,7 @@ jobs:
             name: chatwoot-secrets
           type: Opaque
           stringData:
+            DATABASE_URL: "postgresql://${{ secrets.POSTGRES_USERNAME }}:${{ secrets.POSTGRES_PASSWORD }}@${{ secrets.POSTGRES_HOST }}:${{ secrets.POSTGRES_PORT }}/${{ secrets.POSTGRES_DATABASE }}?sslmode=require"
             POSTGRES_HOST: "${{ secrets.POSTGRES_HOST }}"
             POSTGRES_PORT: "${{ secrets.POSTGRES_PORT }}"
             POSTGRES_DATABASE: "${{ secrets.POSTGRES_DATABASE }}"
