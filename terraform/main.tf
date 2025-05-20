@@ -19,7 +19,7 @@ provider "digitalocean" {
 resource "digitalocean_kubernetes_cluster" "chatwoot" {
   name    = "chatwoot-cluster"
   region  = var.region
-  version = "1.28.2-do.0"
+  version = "1.31.6-do.1"
 
   node_pool {
     name       = "default-pool"
