@@ -202,7 +202,7 @@ jobs:
           export DOCKER_USERNAME="${{ secrets.DOCKER_USERNAME }}"
           
           # Apply deployments and services with environment variable substitution
-          envsubst < k8s/rails-deployment.yaml | kubectl apply -f -
+          kubectl apply -f k8s/rails-deployment.yaml
           kubectl apply -f k8s/vite-deployment.yaml
           kubectl apply -f k8s/sidekiq-deployment.yaml
           kubectl apply -f k8s/mailhog-deployment.yaml

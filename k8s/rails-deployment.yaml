@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: rails
-        image: wavai/chatwoot-rails:latest
+        image: wavai/chatwoot-rails
         imagePullPolicy: Always
         ports:
         - containerPort: 3000

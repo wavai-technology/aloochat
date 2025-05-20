@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: vite
-        image: wavai/chatwoot-vite:latest
+        image: wavai/chatwoot-vite
         ports:
         - containerPort: 3036
         envFrom:
