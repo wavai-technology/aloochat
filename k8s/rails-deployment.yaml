@@ -15,6 +15,7 @@ spec:
       containers:
       - name: rails
         image: ${DOCKER_USERNAME}/chatwoot-rails:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
         envFrom:

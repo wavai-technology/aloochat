@@ -198,6 +198,9 @@ jobs:
       
       - name: Deploy to Kubernetes
         run: |
+          # Export the Docker username for envsubst
+          export DOCKER_USERNAME="${{ secrets.DOCKER_USERNAME }}"
+          
           # Apply deployments and services with environment variable substitution
           envsubst < k8s/rails-deployment.yaml | kubectl apply -f -
           kubectl apply -f k8s/vite-deployment.yaml
