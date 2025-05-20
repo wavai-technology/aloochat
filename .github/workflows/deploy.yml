@@ -169,18 +169,18 @@ jobs:
             name: chatwoot-secrets
           type: Opaque
           stringData:
-            POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-            POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
-            POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
-            POSTGRES_USERNAME: ${{ secrets.POSTGRES_USERNAME }}
-            POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-            REDIS_URL: ${{ secrets.REDIS_URL }}
-            REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
-            REDIS_HOST: ${{ secrets.REDIS_HOST }}
-            REDIS_PORT: ${{ secrets.REDIS_PORT }}
-            SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
-            SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
-            SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+            POSTGRES_HOST: "${{ secrets.POSTGRES_HOST }}"
+            POSTGRES_PORT: "${{ secrets.POSTGRES_PORT }}"
+            POSTGRES_DATABASE: "${{ secrets.POSTGRES_DATABASE }}"
+            POSTGRES_USERNAME: "${{ secrets.POSTGRES_USERNAME }}"
+            POSTGRES_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
+            REDIS_URL: "${{ secrets.REDIS_URL }}"
+            REDIS_PASSWORD: "${{ secrets.REDIS_PASSWORD }}"
+            REDIS_HOST: "${{ secrets.REDIS_HOST }}"
+            REDIS_PORT: "${{ secrets.REDIS_PORT }}"
+            SECRET_KEY_BASE: "${{ secrets.SECRET_KEY_BASE }}"
+            SMTP_USERNAME: "${{ secrets.SMTP_USERNAME }}"
+            SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
           EOF
           
           # Apply the secret
