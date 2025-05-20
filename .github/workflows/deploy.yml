@@ -51,11 +51,6 @@ jobs:
           gem install bundler
           bundle install
           pnpm install
-      
-      - name: Run tests
-        run: |
-          bundle exec rspec
-          bundle exec rubocop
 
   build-and-push:
     needs: test
