@@ -42,7 +42,7 @@ ENV EXECJS_RUNTIME=Node
 RUN mkdir -p tmp/cache tmp/pids tmp/sockets log
 
 # Precompile assets
-RUN bundle exec rails assets:precompile
+RUN SECRET_KEY_BASE=QawP2paHf7 bundle exec rails assets:precompile
 
 # Set permissions
 RUN chmod +x docker/entrypoints/rails.sh

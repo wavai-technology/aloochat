@@ -40,6 +40,9 @@ ENV VITE_DEV_SERVER_HOST=0.0.0.0
 # Create necessary directories
 RUN mkdir -p tmp/cache tmp/pids tmp/sockets log
 
+# Precompile assets
+RUN SECRET_KEY_BASE=QawP2paHf7 bundle exec rails assets:precompile
+
 # Set permissions
 RUN chmod +x docker/entrypoints/vite.sh
 
