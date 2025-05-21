@@ -32,9 +32,6 @@ RUN gem install bundler:${BUNDLER_VERSION} && bundle install
 # Copy the rest of the application
 COPY . .
 
-# Precompile assets
-RUN bundle exec rails assets:precompile
-
 # Set environment variables
 ENV RAILS_ENV=production
 ENV NODE_ENV=production
@@ -43,6 +40,9 @@ ENV EXECJS_RUNTIME=Node
 
 # Create necessary directories
 RUN mkdir -p tmp/cache tmp/pids tmp/sockets log
+
+# Precompile assets
+RUN bundle exec rails assets:precompile
 
 # Set permissions
 RUN chmod +x docker/entrypoints/rails.sh
