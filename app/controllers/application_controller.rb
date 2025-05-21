@@ -1,4 +1,8 @@
 class ApplicationController < ActionController::Base
+  # Health check endpoint that bypasses all filters
+  def health
+    render plain: 'OK', status: :ok
+  end
   include DeviseTokenAuth::Concerns::SetUserByToken
   include RequestExceptionHandler
   include Pundit::Authorization
