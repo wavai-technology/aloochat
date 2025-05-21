@@ -264,12 +264,6 @@ jobs:
             echo "Restarting deployments to pick up new ConfigMap values..."
             kubectl rollout restart deployment chatwoot-rails
             kubectl rollout restart deployment chatwoot-vite
-            
-            # Create admin user if it doesn't exist
-            echo "Creating admin user if it doesn't exist..."
-            kubectl apply -f k8s/create-admin-job.yaml
-            kubectl wait --for=condition=complete job/chatwoot-create-admin --timeout=120s
-            kubectl logs job/chatwoot-create-admin
           else
             echo "⚠️ LoadBalancer external IP not available yet."
             echo "You can check the status later with: kubectl get service ingress-nginx-loadbalancer -n ingress-nginx"
