@@ -1,17 +1,59 @@
-name: Deploy to Kubernetes
+name: Deploy to Production
 
 on:
   push:
-    branches: [ main, master ]
-  workflow_dispatch:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
 
 env:
-  DOCKER_REGISTRY: ${{ secrets.DOCKER_USERNAME }}
+  # Docker Registry Configuration
+  DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
+  # Application Configuration
+  ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+  SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+
+  # SMTP Configuration
+  SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+  SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.3'
+          bundler-cache: true
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '23'
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+      
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install
+          pnpm install
+
   build-and-push:
+    needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
     steps:
@@ -147,7 +189,6 @@ jobs:
             SECRET_KEY_BASE: "${{ secrets.SECRET_KEY_BASE }}"
             SMTP_USERNAME: "${{ secrets.SMTP_USERNAME }}"
             SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
-            DOMAIN: "${{ secrets.DOMAIN || '159.223.251.223' }}"
           EOF
           
           # Create the secret
@@ -220,36 +261,27 @@ jobs:
           echo "Applying Ingress configuration..."
           kubectl apply -f k8s/ingress.yaml
           
-          # Check if Ingress LoadBalancer already exists
-          echo "Checking if Ingress LoadBalancer already exists..."
-          if ! kubectl get service ingress-nginx-loadbalancer -n ingress-nginx &>/dev/null; then
-            echo "Ingress LoadBalancer does not exist. Creating it..."
-            envsubst < k8s/ingress-loadbalancer.yaml > k8s/ingress-loadbalancer_generated.yaml
-            kubectl apply -f k8s/ingress-loadbalancer_generated.yaml
-            echo "Ingress LoadBalancer created successfully."
+          # Check if LoadBalancer already exists
+          echo "Checking if LoadBalancer already exists..."
+          if ! kubectl get service chatwoot-loadbalancer &>/dev/null; then
+            echo "LoadBalancer does not exist. Creating it..."
+            envsubst < k8s/loadbalancer.yaml > k8s/loadbalancer_generated.yaml
+            kubectl apply -f k8s/loadbalancer_generated.yaml
+            echo "LoadBalancer created successfully."
           else
-            echo "Ingress LoadBalancer already exists. Skipping creation."
+            echo "LoadBalancer already exists. Skipping creation."
           fi
           
           # Get LoadBalancer external IP
           echo "Getting LoadBalancer external IP..."
-          EXTERNAL_IP=$(kubectl get service ingress-nginx-loadbalancer -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null)
+          EXTERNAL_IP=$(kubectl get service chatwoot-loadbalancer -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null)
           
           if [ -n "$EXTERNAL_IP" ]; then
-            echo "✅ Application is accessible at: http://$EXTERNAL_IP"
+            echo " Application is accessible at: http://$EXTERNAL_IP"
             echo "CHATWOOT_URL=http://$EXTERNAL_IP" >> $GITHUB_ENV
-            
-            # Update ConfigMap with the correct domain
-            echo "Updating ConfigMap with the correct domain..."
-            kubectl patch configmap chatwoot-config --type=merge -p "{\"data\":{\"DOMAIN\":\"$EXTERNAL_IP\",\"FRONTEND_URL\":\"http://$EXTERNAL_IP\",\"VITE_APP_URL\":\"http://$EXTERNAL_IP\"}}"
-            
-            # Restart deployments to pick up new ConfigMap values
-            echo "Restarting deployments to pick up new ConfigMap values..."
-            kubectl rollout restart deployment chatwoot-rails
-            kubectl rollout restart deployment chatwoot-vite
           else
-            echo "⚠️ LoadBalancer external IP not available yet."
-            echo "You can check the status later with: kubectl get service ingress-nginx-loadbalancer -n ingress-nginx"
+            echo " LoadBalancer external IP not available yet."
+            echo "You can check the status later with: kubectl get service chatwoot-loadbalancer"
           fi
           
           # Check ingress

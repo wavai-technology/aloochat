@@ -8,11 +8,10 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
-  - host: chatwoot.example.com
-    http:
+  - http:
       paths:
       - path: /
         pathType: Prefix
@@ -28,7 +27,7 @@ spec:
             name: chatwoot-rails
             port:
               number: 3000
-      - path: /assets
+      - path: /vite
         pathType: Prefix
         backend:
           service:
@@ -41,4 +40,4 @@ spec:
           service:
             name: chatwoot-mailhog
             port:
-              number: 8025 
+              number: 8025
