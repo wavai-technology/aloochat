@@ -1,4 +1,11 @@
-FROM ruby:3.3.0
+FROM ruby:3.3.3
+
+# Set Node and PNPM versions
+ARG NODE_VERSION="23.7.0"
+ARG PNPM_VERSION="10.2.0"
+ENV NODE_VERSION=${NODE_VERSION}
+ENV PNPM_VERSION=${PNPM_VERSION}
+ENV BUNDLER_VERSION=2.5.11
 
 # Install system dependencies
 RUN apt-get update -qq && \
@@ -7,7 +14,7 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists/*
 
 # Install pnpm
-RUN npm install -g pnpm@10
+RUN npm install -g pnpm@${PNPM_VERSION}
 
 # Set working directory
 WORKDIR /app
@@ -20,7 +27,7 @@ RUN pnpm install
 
 # Copy Gemfile and install Ruby dependencies
 COPY Gemfile Gemfile.lock ./
-RUN bundle install
+RUN gem install bundler:${BUNDLER_VERSION} && bundle install
 
 # Copy the rest of the application
 COPY . .
