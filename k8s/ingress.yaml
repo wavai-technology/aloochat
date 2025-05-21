@@ -19,7 +19,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: "cx.aloo.ai"
+  - host: "cx.alooo.ai"
     http:
       paths:
       - path: /((?!vite|assets|packs|cable|mailhog).*)$
