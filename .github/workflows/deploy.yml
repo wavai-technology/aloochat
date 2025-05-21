@@ -109,14 +109,6 @@ jobs:
           sleep 60
           doctl kubernetes cluster kubeconfig save chatwoot-cluster
       
-      - name: Create ConfigMap from template
-        run: |
-          envsubst < k8s/configmap.yaml > k8s/configmap_generated.yaml
-      
-      - name: Create Ingress from template
-        run: |
-          envsubst < k8s/ingress.yaml.template > k8s/ingress_generated.yaml
-      
       - name: Update Kubernetes ConfigMap
         run: |
           kubectl apply -f k8s/configmap.yaml
@@ -178,7 +170,7 @@ jobs:
             
             # Apply direct expose services
             echo "LoadBalancer services do not exist. Creating them..."
-            kubectl apply -f k8s/direct-expose.yaml
+            kubectl apply -f k8s/loadbalancer.yaml
           else
             echo "LoadBalancer services already exist. Skipping creation."
           fi
