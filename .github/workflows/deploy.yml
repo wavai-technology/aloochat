@@ -261,6 +261,29 @@ jobs:
           echo "Applying Ingress configuration..."
           kubectl apply -f k8s/ingress.yaml
           
+          # Check if LoadBalancer already exists
+          echo "Checking if LoadBalancer already exists..."
+          if ! kubectl get service chatwoot-loadbalancer &>/dev/null; then
+            echo "LoadBalancer does not exist. Creating it..."
+            envsubst < k8s/loadbalancer.yaml > k8s/loadbalancer_generated.yaml
+            kubectl apply -f k8s/loadbalancer_generated.yaml
+            echo "LoadBalancer created successfully."
+          else
+            echo "LoadBalancer already exists. Skipping creation."
+          fi
+          
+          # Get LoadBalancer external IP
+          echo "Getting LoadBalancer external IP..."
+          EXTERNAL_IP=$(kubectl get service chatwoot-loadbalancer -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null)
+          
+          if [ -n "$EXTERNAL_IP" ]; then
+            echo " Application is accessible at: http://$EXTERNAL_IP"
+            echo "CHATWOOT_URL=http://$EXTERNAL_IP" >> $GITHUB_ENV
+          else
+            echo " LoadBalancer external IP not available yet."
+            echo "You can check the status later with: kubectl get service chatwoot-loadbalancer"
+          fi
+          
           # Check ingress
           echo "Checking ingress..."
-          kubectl get ingress 
+          kubectl get ingress
