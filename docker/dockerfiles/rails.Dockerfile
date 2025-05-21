@@ -9,7 +9,7 @@ ENV BUNDLER_VERSION=2.5.11
 
 # Install system dependencies
 RUN apt-get update -qq && \
-    apt-get install -y build-essential libpq-dev nodejs npm git curl && \
+    apt-get install -y build-essential libpq-dev nodejs npm git curl postgresql-client && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

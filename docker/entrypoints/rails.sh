@@ -30,5 +30,14 @@ do
   sleep 2;
 done
 
+# Prepare and migrate the database
+echo "Preparing and migrating the database..."
+if [ "$RAILS_ENV" = "development" ]; then
+  bundle exec rails db:chatwoot_prepare || echo "Warning: Database preparation failed, but continuing..."
+else
+  # In production, we want to run migrations but not reset the database
+  bundle exec rails db:migrate || echo "Warning: Database migration failed, but continuing..."
+fi
+
 # Execute the main process of the container
 exec "$@"
