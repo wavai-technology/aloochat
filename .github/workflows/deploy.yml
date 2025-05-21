@@ -161,7 +161,35 @@ jobs:
           # Export the Docker username for envsubst
           export DOCKER_USERNAME="${{ secrets.DOCKER_USERNAME }}"
           
+          # Check if Nginx Ingress Controller is already installed
+          echo "Checking if Nginx Ingress Controller is already installed..."
+          if ! kubectl get namespace ingress-nginx &>/dev/null; then
+            echo "Installing Nginx Ingress Controller..."
+            kubectl create namespace ingress-nginx
+            kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
+            echo "Waiting for Nginx Ingress Controller to be ready..."
+            kubectl wait --namespace ingress-nginx \
+              --for=condition=ready pod \
+              --selector=app.kubernetes.io/component=controller \
+              --timeout=300s
+            echo "Nginx Ingress Controller installed successfully."
+          else
+            echo "Nginx Ingress Controller already installed. Skipping installation."
+          fi
+          
+          # Check if Ingress LoadBalancer already exists
+          echo "Checking if Ingress LoadBalancer already exists..."
+          if ! kubectl get service ingress-nginx-loadbalancer -n ingress-nginx &>/dev/null; then
+            echo "Ingress LoadBalancer does not exist. Creating it..."
+            envsubst < k8s/ingress-loadbalancer.yaml > k8s/ingress-loadbalancer_generated.yaml
+            kubectl apply -f k8s/ingress-loadbalancer_generated.yaml
+            echo "Ingress LoadBalancer created successfully."
+          else
+            echo "Ingress LoadBalancer already exists. Skipping creation."
+          fi
+          
           # Apply deployments and services with environment variable substitution
+          echo "Applying deployments and services..."
           kubectl apply -f k8s/rails-deployment.yaml
           kubectl apply -f k8s/vite-deployment.yaml
           kubectl apply -f k8s/sidekiq-deployment.yaml
@@ -219,17 +247,6 @@ jobs:
           # Apply Ingress after all services are ready
           echo "Applying Ingress configuration..."
           kubectl apply -f k8s/ingress.yaml
-          
-          # Check if Ingress LoadBalancer already exists
-          echo "Checking if Ingress LoadBalancer already exists..."
-          if ! kubectl get service ingress-nginx-loadbalancer -n ingress-nginx &>/dev/null; then
-            echo "Ingress LoadBalancer does not exist. Creating it..."
-            envsubst < k8s/ingress-loadbalancer.yaml > k8s/ingress-loadbalancer_generated.yaml
-            kubectl apply -f k8s/ingress-loadbalancer_generated.yaml
-            echo "Ingress LoadBalancer created successfully."
-          else
-            echo "Ingress LoadBalancer already exists. Skipping creation."
-          fi
           
           # Get LoadBalancer external IP
           echo "Getting LoadBalancer external IP..."
