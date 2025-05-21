@@ -17,7 +17,7 @@ spec:
         image: wavai/chatwoot-rails
         imagePullPolicy: Always
         command: ["/bin/sh"]
-        args: ["-c", "bundle exec rails server -b 0.0.0.0"]
+        args: ["-c", "docker/entrypoints/rails.sh && bundle exec rails server -b 0.0.0.0"]
         ports:
         - containerPort: 3000
         envFrom:
@@ -31,6 +31,12 @@ spec:
             secretKeyRef:
               name: chatwoot-secrets
               key: DATABASE_URL
+        - name: VITE_DEV_SERVER_HOST
+          value: "chatwoot-vite"
+        - name: NODE_ENV
+          value: "production"
+        - name: RAILS_ENV
+          value: "production"
         resources:
           requests:
             memory: "512Mi"

@@ -17,7 +17,7 @@ spec:
         image: wavai/chatwoot-vite
         imagePullPolicy: Always
         command: ["/bin/sh"]
-        args: ["-c", "bundle exec vite dev"]
+        args: ["-c", "docker/entrypoints/vite.sh && bin/vite dev"]
         ports:
         - containerPort: 3036
         envFrom:
@@ -25,6 +25,13 @@ spec:
             name: chatwoot-config
         - secretRef:
             name: chatwoot-secrets
+        env:
+        - name: VITE_DEV_SERVER_HOST
+          value: "0.0.0.0"
+        - name: NODE_ENV
+          value: "production"
+        - name: RAILS_ENV
+          value: "production"
         resources:
           requests:
             memory: "256Mi"
