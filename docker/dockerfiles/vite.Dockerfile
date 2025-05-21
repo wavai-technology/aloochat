@@ -27,7 +27,7 @@ RUN pnpm install
 
 # Copy Gemfile and install Ruby dependencies
 COPY Gemfile Gemfile.lock ./
-RUN gem install bundler:${BUNDLER_VERSION} && bundle install
+RUN gem install bundler:${BUNDLER_VERSION} && bundle config set --local without 'development test' && bundle install
 
 # Copy the rest of the application
 COPY . .
