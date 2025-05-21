@@ -17,7 +17,7 @@ spec:
         image: wavai/chatwoot-vite
         imagePullPolicy: Always
         command: ["/bin/sh"]
-        args: ["-c", "bundle install && bundle exec vite dev"]
+        args: ["-c", "bundle exec vite dev"]
         ports:
         - containerPort: 3036
         envFrom:

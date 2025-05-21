@@ -17,7 +17,7 @@ spec:
         image: wavai/chatwoot-rails
         imagePullPolicy: Always
         command: ["/bin/sh"]
-        args: ["-c", "bundle install && bundle add devise-secure_password && bundle add annotate bullet letter_opener scss_lint web-console json_refs squasher rack-mini-profiler stackprof meta_request database_cleaner webmock test-prof active_record_query_trace brakeman bundle-audit byebug climate_control debug factory_bot_rails listen mock_redis pry-rails rspec_junit_formatter rspec-rails rubocop rubocop-performance rubocop-rails rubocop-rspec seed_dump shoulda-matchers simplecov spring spring-watcher-listen uniform_notifier launchy sass bindex rack-contrib database_cleaner-active_record crack hashdiff bundler-audit irb reline factory_bot rb-fsevent rb-inotify pry && bundle exec rails server -b 0.0.0.0"]
+        args: ["-c", "bundle exec rails server -b 0.0.0.0"]
         ports:
         - containerPort: 3000
         envFrom:
