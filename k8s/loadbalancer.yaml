@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatwoot-rails-lb
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-algorithm: "round_robin"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 3000
+    protocol: TCP
+    name: http
+  selector:
+    app: chatwoot-rails
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatwoot-vite-lb
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-algorithm: "round_robin"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 3036
+    targetPort: 3036
+    protocol: TCP
+    name: http
+  selector:
+    app: chatwoot-vite

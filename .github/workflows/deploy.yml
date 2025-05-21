@@ -147,7 +147,7 @@ jobs:
             SECRET_KEY_BASE: "${{ secrets.SECRET_KEY_BASE }}"
             SMTP_USERNAME: "${{ secrets.SMTP_USERNAME }}"
             SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
-            DOMAIN: "${{ secrets.DOMAIN || '129.212.142.184' }}"
+            DOMAIN: "${{ secrets.DOMAIN || 'cx.aloo.ai' }}"
           EOF
           
           # Create the secret
@@ -161,39 +161,27 @@ jobs:
           # Export the Docker username for envsubst
           export DOCKER_USERNAME="${{ secrets.DOCKER_USERNAME }}"
           
-          # Check if Nginx Ingress Controller is already installed
-          echo "Checking if Nginx Ingress Controller is already installed..."
-          if ! kubectl get namespace ingress-nginx &>/dev/null; then
-            echo "Installing Nginx Ingress Controller..."
-            kubectl create namespace ingress-nginx
-            kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
-            echo "Waiting for Nginx Ingress Controller to be ready..."
-            kubectl wait --namespace ingress-nginx \
-              --for=condition=ready pod \
-              --selector=app.kubernetes.io/component=controller \
-              --timeout=300s
-            echo "Nginx Ingress Controller installed successfully."
-          else
-            echo "Nginx Ingress Controller already installed. Skipping installation."
-          fi
-          
-          # Check if Ingress LoadBalancer already exists
-          echo "Checking if Ingress LoadBalancer already exists..."
-          if ! kubectl get service ingress-nginx-loadbalancer -n ingress-nginx &>/dev/null; then
-            echo "Ingress LoadBalancer does not exist. Creating it..."
-            envsubst < k8s/ingress-loadbalancer.yaml > k8s/ingress-loadbalancer_generated.yaml
-            kubectl apply -f k8s/ingress-loadbalancer_generated.yaml
-            echo "Ingress LoadBalancer created successfully."
-          else
-            echo "Ingress LoadBalancer already exists. Skipping creation."
-          fi
-          
           # Apply deployments and services with environment variable substitution
           echo "Applying deployments and services..."
           kubectl apply -f k8s/rails-deployment.yaml
           kubectl apply -f k8s/vite-deployment.yaml
           kubectl apply -f k8s/sidekiq-deployment.yaml
           kubectl apply -f k8s/mailhog-deployment.yaml
+          
+          # Check if direct LoadBalancer services already exist
+          echo "Checking if LoadBalancer services already exist..."
+          if ! kubectl get service chatwoot-rails-lb &>/dev/null || ! kubectl get service chatwoot-vite-lb &>/dev/null; then
+            # Clean up any existing Ingress resources to avoid conflicts
+            echo "Cleaning up existing Ingress resources..."
+            kubectl delete ingress chatwoot-ingress --ignore-not-found=true
+            kubectl delete service ingress-nginx-loadbalancer -n ingress-nginx --ignore-not-found=true
+            
+            # Apply direct expose services
+            echo "LoadBalancer services do not exist. Creating them..."
+            kubectl apply -f k8s/direct-expose.yaml
+          else
+            echo "LoadBalancer services already exist. Skipping creation."
+          fi
           
           # Wait for deployments with increased timeout
           echo "Waiting for Rails deployment..."
@@ -244,21 +232,26 @@ jobs:
           echo "Checking services..."
           kubectl get services
           
-          # Apply Ingress after all services are ready
-          echo "Applying Ingress configuration..."
-          kubectl apply -f k8s/ingress.yaml
+          # Get LoadBalancer external IPs
+          echo "Getting LoadBalancer external IPs..."
+          RAILS_IP=$(kubectl get service chatwoot-rails-lb -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null)
+          VITE_IP=$(kubectl get service chatwoot-vite-lb -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null)
           
-          # Get LoadBalancer external IP
-          echo "Getting LoadBalancer external IP..."
-          EXTERNAL_IP=$(kubectl get service ingress-nginx-loadbalancer -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null)
-          
-          if [ -n "$EXTERNAL_IP" ]; then
-            echo "✅ Application is accessible at: http://$EXTERNAL_IP"
-            echo "CHATWOOT_URL=http://$EXTERNAL_IP" >> $GITHUB_ENV
+          if [ -n "$RAILS_IP" ]; then
+            echo "✅ Rails application is accessible at: http://$RAILS_IP"
+            echo "✅ Vite server is accessible at: http://$VITE_IP:3036"
+            echo "CHATWOOT_URL=http://$RAILS_IP" >> $GITHUB_ENV
             
             # Update ConfigMap with the correct domain
             echo "Updating ConfigMap with the correct domain..."
-            kubectl patch configmap chatwoot-config --type=merge -p "{\"data\":{\"DOMAIN\":\"$EXTERNAL_IP\",\"FRONTEND_URL\":\"http://$EXTERNAL_IP\",\"VITE_APP_URL\":\"http://$EXTERNAL_IP\"}}"
+            if [ -n "${{ secrets.DOMAIN }}" ]; then
+              DOMAIN="${{ secrets.DOMAIN }}"
+              echo "Using custom domain: $DOMAIN"
+              kubectl patch configmap chatwoot-config --type=merge -p "{\"data\":{\"DOMAIN\":\"$DOMAIN\",\"FRONTEND_URL\":\"http://$DOMAIN\",\"VITE_APP_URL\":\"http://$DOMAIN\"}}"
+            else
+              echo "Using LoadBalancer IP as domain"
+              kubectl patch configmap chatwoot-config --type=merge -p "{\"data\":{\"DOMAIN\":\"$RAILS_IP\",\"FRONTEND_URL\":\"http://$RAILS_IP\",\"VITE_APP_URL\":\"http://$RAILS_IP\"}}"
+            fi
             
             # Restart deployments to pick up new ConfigMap values
             echo "Restarting deployments to pick up new ConfigMap values..."
@@ -266,9 +259,5 @@ jobs:
             kubectl rollout restart deployment chatwoot-vite
           else
             echo "⚠️ LoadBalancer external IP not available yet."
-            echo "You can check the status later with: kubectl get service ingress-nginx-loadbalancer -n ingress-nginx"
+            echo "You can check the status later with: kubectl get service chatwoot-rails-lb"
           fi
-          
-          # Check ingress
-          echo "Checking ingress..."
-          kubectl get ingress
