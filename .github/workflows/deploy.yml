@@ -247,7 +247,7 @@ jobs:
             if [ -n "${{ secrets.DOMAIN }}" ]; then
               DOMAIN="${{ secrets.DOMAIN }}"
               echo "Using custom domain: $DOMAIN"
-              kubectl patch configmap chatwoot-config --type=merge -p "{\"data\":{\"DOMAIN\":\"$DOMAIN\",\"FRONTEND_URL\":\"http://$DOMAIN\",\"VITE_APP_URL\":\"http://$DOMAIN\"}}"
+              kubectl patch configmap chatwoot-config --type=merge -p "{\"data\":{\"DOMAIN\":\"$DOMAIN\",\"FRONTEND_URL\":\"https://$DOMAIN\",\"VITE_APP_URL\":\"https://$DOMAIN\"}}"
             else
               echo "Using LoadBalancer IP as domain"
               kubectl patch configmap chatwoot-config --type=merge -p "{\"data\":{\"DOMAIN\":\"$RAILS_IP\",\"FRONTEND_URL\":\"http://$RAILS_IP\",\"VITE_APP_URL\":\"http://$RAILS_IP\"}}"
