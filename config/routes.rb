@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # Health check endpoints for Kubernetes
-  get '/health', to: 'health#show'
-  get '/healthz', to: 'healthz#show', defaults: { format: 'text' }
+  get '/health', to: 'kubernetes_health#health'
+  get '/healthz', to: 'kubernetes_health#health'
   
   # AUTH STARTS
   mount_devise_token_auth_for 'User', at: 'auth', controllers: {

@@ -64,27 +64,21 @@ if [ "$RAILS_ENV" = "development" ]; then
   bundle exec rails db:chatwoot_prepare || echo "Warning: Database preparation failed, but continuing..."
 else
   # In production, we want to run migrations but not reset the database
-  echo "Checking if database exists and is accessible..."
-  if bundle exec rails runner 'ActiveRecord::Base.connection.execute("SELECT 1")' > /dev/null 2>&1; then
-    echo "Database connection successful, running migrations..."
-    # Run migrations with detailed error output
-    bundle exec rails db:migrate || {
-      echo "Migration failed. Detailed error:"
-      bundle exec rails db:migrate --trace
-      echo "Warning: Database migration failed, but continuing anyway..."
-    }
+  echo "Setting up database connection..."
+  # We're using a managed database in Digital Ocean, so we don't need to create it
+  echo "Using existing managed database in Digital Ocean..."
+  
+  # Wait a bit for the database connection to be ready
+  sleep 5
+  
+  # Try to run migrations
+  echo "Attempting to run database migrations..."
+  if bundle exec rails db:migrate; then
+    echo "Database migrations completed successfully."
   else
-    echo "Database connection failed. Checking if database exists..."
-    # Try to create the database if it doesn't exist
-    bundle exec rails db:create || echo "Failed to create database, it may already exist"
-    
-    # Try running migrations again
-    echo "Attempting migrations after database check..."
-    bundle exec rails db:migrate || {
-      echo "Migration still failed. Detailed error:"
-      bundle exec rails db:migrate --trace
-      echo "Warning: Database migration failed, but continuing anyway..."
-    }
+    echo "Migration failed. Detailed error:"
+    bundle exec rails db:migrate --trace || true
+    echo "Warning: Database migration failed, but continuing anyway..."
   fi
 fi
 
