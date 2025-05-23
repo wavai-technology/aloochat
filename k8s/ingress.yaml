@@ -6,61 +6,22 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header X-Forwarded-Proto $scheme;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header Host $http_host;
-      proxy_buffer_size 16k;
-      proxy_busy_buffers_size 24k;
-      proxy_buffers 64 4k;
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - cx.alooo.ai
+    secretName: chatwoot-tls
   rules:
-  - host: "cx.alooo.ai"
+  - host: cx.alooo.ai
     http:
       paths:
-      - path: /((?!vite|assets|packs|cable|mailhog).*)$
-        pathType: ImplementationSpecific
+      - path: /
+        pathType: Prefix
         backend:
           service:
             name: chatwoot-rails
             port:
               number: 3000
-      - path: /cable/?(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: chatwoot-rails
-            port:
-              number: 3000
-      - path: /vite/(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: chatwoot-vite
-            port:
-              number: 3036
-      - path: /assets/(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: chatwoot-vite
-            port:
-              number: 3036
-      - path: /packs/(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: chatwoot-vite
-            port:
-              number: 3036
-      - path: /mailhog/(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: chatwoot-mailhog
-            port:
-              number: 8025
