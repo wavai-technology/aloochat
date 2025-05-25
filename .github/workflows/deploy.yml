@@ -147,35 +147,33 @@ jobs:
           NAMESPACE=ingress-nginx
 
           # Apply deployments & services
-          echo "Applying deployments and services in namespace $NAMESPACE..."
-          kubectl apply -n $NAMESPACE -f k8s/rails-deployment.yaml
-          kubectl apply -n $NAMESPACE -f k8s/vite-deployment.yaml
-          kubectl apply -n $NAMESPACE -f k8s/sidekiq-deployment.yaml
-          kubectl apply -n $NAMESPACE -f k8s/mailhog-deployment.yaml
+          echo "Applying deployments and services in namespace default..."
+          kubectl apply -n -f k8s/rails-deployment.yaml
+          kubectl apply -n -f k8s/vite-deployment.yaml
+          kubectl apply -n -f k8s/sidekiq-deployment.yaml
+          kubectl apply -n -f k8s/mailhog-deployment.yaml
 
-          # Apply ingress resource to route traffic via ingress-nginx
-          kubectl apply -n $NAMESPACE -f k8s/ingress.yaml
 
           # Wait for all deployments to be ready
           echo "Waiting for Rails deployment..."
-          kubectl rollout status deployment/chatwoot-rails -n $NAMESPACE --timeout=300s
+          kubectl rollout status deployment/chatwoot-rails -n default --timeout=300s
           
           echo "Waiting for Vite deployment..."
-          kubectl rollout status deployment/chatwoot-vite -n $NAMESPACE --timeout=300s
+          kubectl rollout status deployment/chatwoot-vite -n default --timeout=300s
           
           echo "Waiting for Sidekiq deployment..."
-          kubectl rollout status deployment/chatwoot-sidekiq -n $NAMESPACE --timeout=300s
+          kubectl rollout status deployment/chatwoot-sidekiq -n default --timeout=300s
           
           echo "Waiting for Mailhog deployment..."
-          kubectl rollout status deployment/chatwoot-mailhog -n $NAMESPACE --timeout=300s
+          kubectl rollout status deployment/chatwoot-mailhog -n default --timeout=300s
 
           # Final status checks
           echo "Pods status:"
-          kubectl get pods -n $NAMESPACE
+          kubectl get pods -n default
 
           echo "Services status:"
-          kubectl get svc -n $NAMESPACE
+          kubectl get svc -n default
 
           echo "Ingress status:"
-          kubectl get ingress -n $NAMESPACE
+          kubectl get ingress -n default
         
