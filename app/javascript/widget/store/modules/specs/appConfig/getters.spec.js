@@ -9,8 +9,8 @@ describe('#getters', () => {
   });
   describe('#getReferrerHost', () => {
     it('returns correct value', () => {
-      const state = { referrerHost: 'www.chatwoot.com' };
-      expect(getters.getReferrerHost(state)).toEqual('www.chatwoot.com');
+      const state = { referrerHost: 'www.alloochat.ai' };
+      expect(getters.getReferrerHost(state)).toEqual('www.alloochat.ai');
     });
   });
   describe('#getShowUnreadMessagesDialog', () => {
