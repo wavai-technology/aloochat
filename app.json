@@ -1,15 +1,17 @@
 {
-  "name": "Chatwoot",
-  "description": "Chatwoot is a customer support tool for instant messaging channels",
+  "name": "AlooChat",
+  "description": "AlooChat is a customer support tool for instant messaging channels",
   "website": "https://www.alloochat.ai/",
-  "repository": "https://github.com/chatwoot/chatwoot",
+  "repository": "https://github.com/wavai-technology/bleep-chatwoot",
   "logo": "https://app.alloochat.ai/brand-assets/logo_thumbnail.svg",
   "keywords": [
     "live chat",
     "customer support",
     "ruby",
     "rails",
-    "vue"
+    "vue",
+    "alloochat",
+    "alloochat.ai"
   ],
   "success_url": "/",
   "env": {
@@ -26,11 +28,11 @@
       "value": "production"
     },
     "FRONTEND_URL": {
-      "description": "Public root URL of the Chatwoot installation. This will be used in the emails.",
+      "description": "Public root URL of the AlooChat installation. This will be used in the emails.",
       "value": "https://CHANGE.herokuapp.com"
     },
     "INSTALLATION_ENV": {
-      "description": "Installation method used for Chatwoot.",
+      "description": "Installation method used for AlooChat.",
       "value": "heroku"
     },
     "REDIS_OPENSSL_VERIFY_MODE":{
