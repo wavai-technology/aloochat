@@ -136,7 +136,7 @@ jobs:
             SECRET_KEY_BASE: "${{ secrets.SECRET_KEY_BASE }}"
             SMTP_USERNAME: "${{ secrets.SMTP_USERNAME }}"
             SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
-            DOMAIN: "${{ secrets.DOMAIN || 'cx.alooo.ai' }}"
+            DOMAIN: "${{ secrets.DOMAIN || 'cx.aloochat.ai' }}"
           EOF
           kubectl create -f secret.yaml
           rm secret.yaml

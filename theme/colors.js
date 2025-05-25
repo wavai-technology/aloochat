@@ -27,18 +27,18 @@ export const colors = {
     // 700: blueDark.blue8,
     // 800: blueDark.blue6,
     // 900: blueDark.blue2,
-    25: '#F2FCF2',
-    50: '#E5F9E5',
-    75: '#D8F6D8',
-    100: '#CAF3CA',
-    200: '#B0EBB0',
-    300: '#96E396',
-    400: '#7CDB7C',
-    500: '#5FC95B',
-    600: '#4CAE49',
-    700: '#3A9337',
-    800: '#297825',
-    900: '#175D13',
+    25: '#E9EBFF',
+    50: '#D3D8FF',
+    75: '#BDC5FF',
+    100: '#A7B2FF',
+    200: '#919FFF',
+    300: '#7B8CFF',
+    400: '#6579FF',
+    500: '#2E4AFF', // Primary blue
+    600: '#2A43E6',
+    700: '#253BCC',
+    800: '#1F32B3',
+    900: '#1A2A99',
   },
   green: {
     50: greenDark.green12,
@@ -403,7 +403,7 @@ export const colors = {
     },
 
     black: '#000000',
-    brand: '#5FC95B',
+    brand: '#2E4AFF',
     background: 'rgb(var(--background-color) / <alpha-value>)',
     solid: {
       1: 'rgb(var(--solid-1) / <alpha-value>)',
@@ -428,4 +428,7 @@ export const colors = {
     'blue-border': 'rgba(var(--border-blue))',
     'blue-text': 'rgba(var(--text-blue))',
   },
+  accent: {
+    green: '#E2FF28', // Bright green/yellow accent
+  }
 };

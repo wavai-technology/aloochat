@@ -8,11 +8,11 @@ metadata:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   tls:
-    # - hosts:
-    #     - cx.alooo.ai
-    #   secretName: chatwoot-tls
+    - hosts:
+        - cx.aloochat.ai
+      secretName: chatwoot-tls
   rules:
-    - host: cx.alooo.ai
+    - host: cx.aloochat.ai
       http:
         paths:
           - path: /
