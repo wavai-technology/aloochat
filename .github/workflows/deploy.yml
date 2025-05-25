@@ -51,7 +51,7 @@ jobs:
           tags: ${{ env.DOCKER_REGISTRY }}/chatwoot-vite:latest
 
   deploy:
-    # needs: build-and-push
+    needs: build-and-push
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
     steps:
