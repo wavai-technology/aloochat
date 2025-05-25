@@ -115,10 +115,7 @@ jobs:
       
       - name: Create Kubernetes Secrets
         run: |
-          # Delete existing secret if it exists
           kubectl delete secret chatwoot-secrets --ignore-not-found=true
-          
-          # Create a temporary file for the secret
           cat > secret.yaml << EOF
           apiVersion: v1
           kind: Secret
@@ -141,115 +138,44 @@ jobs:
             SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
             DOMAIN: "${{ secrets.DOMAIN || 'cx.alooo.ai' }}"
           EOF
-          
-          # Create the secret
           kubectl create -f secret.yaml
-          
-          # Clean up
           rm secret.yaml
       
-      - name: Deploy to Kubernetes
+      - name: Deploy Chatwoot to Kubernetes in ingress-nginx namespace
         run: |
-          # Export the Docker username for envsubst
-          export DOCKER_USERNAME="${{ secrets.DOCKER_USERNAME }}"
-          
-          # Apply deployments and services with environment variable substitution
-          echo "Applying deployments and services..."
-          kubectl apply -f k8s/rails-deployment.yaml
-          kubectl apply -f k8s/vite-deployment.yaml
-          kubectl apply -f k8s/sidekiq-deployment.yaml
-          kubectl apply -f k8s/mailhog-deployment.yaml
-          
-          # Check if direct LoadBalancer services already exist
-          echo "Checking if LoadBalancer services already exist..."
-          if ! kubectl get service chatwoot-rails-lb &>/dev/null || ! kubectl get service chatwoot-vite-lb &>/dev/null; then
-            # Clean up any existing Ingress resources to avoid conflicts
-            echo "Cleaning up existing Ingress resources..."
-            kubectl delete ingress chatwoot-ingress --ignore-not-found=true
-            kubectl delete service ingress-nginx-loadbalancer -n ingress-nginx --ignore-not-found=true
-            
-            # Apply direct expose services
-            echo "LoadBalancer services do not exist. Creating them..."
-            kubectl apply -f k8s/loadbalancer.yaml
-          else
-            echo "LoadBalancer services already exist. Skipping creation."
-          fi
-          
-          # Wait for deployments with increased timeout
+          # Set namespace
+          NAMESPACE=ingress-nginx
+
+          # Apply deployments & services
+          echo "Applying deployments and services in namespace $NAMESPACE..."
+          kubectl apply -n $NAMESPACE -f k8s/rails-deployment.yaml
+          kubectl apply -n $NAMESPACE -f k8s/vite-deployment.yaml
+          kubectl apply -n $NAMESPACE -f k8s/sidekiq-deployment.yaml
+          kubectl apply -n $NAMESPACE -f k8s/mailhog-deployment.yaml
+
+          # Apply ingress resource to route traffic via ingress-nginx
+          kubectl apply -n $NAMESPACE -f k8s/chatwoot-ingress.yaml
+
+          # Wait for all deployments to be ready
           echo "Waiting for Rails deployment..."
-          kubectl rollout status deployment/chatwoot-rails --timeout=300s || {
-            echo "Rails deployment failed. Checking status..."
-            kubectl get pods -l app=chatwoot-rails
-            kubectl describe deployment chatwoot-rails
-            kubectl get events --sort-by='.lastTimestamp'
-            kubectl logs -l app=chatwoot-rails --tail=100
-            exit 1
-          }
+          kubectl rollout status deployment/chatwoot-rails -n $NAMESPACE --timeout=300s
           
           echo "Waiting for Vite deployment..."
-          kubectl rollout status deployment/chatwoot-vite --timeout=300s || {
-            echo "Vite deployment failed. Checking status..."
-            kubectl get pods -l app=chatwoot-vite
-            kubectl describe deployment chatwoot-vite
-            kubectl get events --sort-by='.lastTimestamp'
-            kubectl logs -l app=chatwoot-vite --tail=100
-            exit 1
-          }
+          kubectl rollout status deployment/chatwoot-vite -n $NAMESPACE --timeout=300s
           
           echo "Waiting for Sidekiq deployment..."
-          kubectl rollout status deployment/chatwoot-sidekiq --timeout=300s || {
-            echo "Sidekiq deployment failed. Checking status..."
-            kubectl get pods -l app=chatwoot-sidekiq
-            kubectl describe deployment chatwoot-sidekiq
-            kubectl get events --sort-by='.lastTimestamp'
-            kubectl logs -l app=chatwoot-sidekiq --tail=100
-            exit 1
-          }
+          kubectl rollout status deployment/chatwoot-sidekiq -n $NAMESPACE --timeout=300s
           
           echo "Waiting for Mailhog deployment..."
-          kubectl rollout status deployment/chatwoot-mailhog --timeout=300s || {
-            echo "Mailhog deployment failed. Checking status..."
-            kubectl get pods -l app=chatwoot-mailhog
-            kubectl describe deployment chatwoot-mailhog
-            kubectl get events --sort-by='.lastTimestamp'
-            kubectl logs -l app=chatwoot-mailhog --tail=100
-            exit 1
-          }
-          
-          # Check all pods are running
-          echo "Checking all pods are running..."
-          kubectl get pods
-          
-          # Check services
-          echo "Checking services..."
-          kubectl get services
-          
-          # Get LoadBalancer external IPs
-          echo "Getting LoadBalancer external IPs..."
-          RAILS_IP=$(kubectl get service chatwoot-rails-lb -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null)
-          VITE_IP=$(kubectl get service chatwoot-vite-lb -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null)
-          
-          if [ -n "$RAILS_IP" ]; then
-            echo "✅ Rails application is accessible at: http://$RAILS_IP"
-            echo "✅ Vite server is accessible at: http://$VITE_IP:3036"
-            echo "CHATWOOT_URL=http://$RAILS_IP" >> $GITHUB_ENV
-            
-            # Update ConfigMap with the correct domain
-            echo "Updating ConfigMap with the correct domain..."
-            if [ -n "${{ secrets.DOMAIN }}" ]; then
-              DOMAIN="${{ secrets.DOMAIN }}"
-              echo "Using custom domain: $DOMAIN"
-              kubectl patch configmap chatwoot-config --type=merge -p "{\"data\":{\"DOMAIN\":\"$DOMAIN\",\"FRONTEND_URL\":\"https://$DOMAIN\",\"VITE_APP_URL\":\"https://$DOMAIN\"}}"
-            else
-              echo "Using LoadBalancer IP as domain"
-              kubectl patch configmap chatwoot-config --type=merge -p "{\"data\":{\"DOMAIN\":\"$RAILS_IP\",\"FRONTEND_URL\":\"http://$RAILS_IP\",\"VITE_APP_URL\":\"http://$RAILS_IP\"}}"
-            fi
-            
-            # Restart deployments to pick up new ConfigMap values
-            echo "Restarting deployments to pick up new ConfigMap values..."
-            kubectl rollout restart deployment chatwoot-rails
-            kubectl rollout restart deployment chatwoot-vite
-          else
-            echo "⚠️ LoadBalancer external IP not available yet."
-            echo "You can check the status later with: kubectl get service chatwoot-rails-lb"
-          fi
+          kubectl rollout status deployment/chatwoot-mailhog -n $NAMESPACE --timeout=300s
+
+          # Final status checks
+          echo "Pods status:"
+          kubectl get pods -n $NAMESPACE
+
+          echo "Services status:"
+          kubectl get svc -n $NAMESPACE
+
+          echo "Ingress status:"
+          kubectl get ingress -n $NAMESPACE
+        
