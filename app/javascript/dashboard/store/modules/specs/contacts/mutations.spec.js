@@ -7,19 +7,19 @@ describe('#mutations', () => {
     it('set contact records', () => {
       const state = { records: {} };
       mutations[types.SET_CONTACTS](state, [
-        { id: 2, name: 'contact2', email: 'contact2@alloochat.ai' },
-        { id: 1, name: 'contact1', email: 'contact1@alloochat.ai' },
+        { id: 2, name: 'contact2', email: 'contact2@aloochat.ai' },
+        { id: 1, name: 'contact1', email: 'contact1@aloochat.ai' },
       ]);
       expect(state.records).toEqual({
         1: {
           id: 1,
           name: 'contact1',
-          email: 'contact1@alloochat.ai',
+          email: 'contact1@aloochat.ai',
         },
         2: {
           id: 2,
           name: 'contact2',
-          email: 'contact2@alloochat.ai',
+          email: 'contact2@aloochat.ai',
         },
       });
       expect(state.sortOrder).toEqual([2, 1]);
@@ -30,18 +30,18 @@ describe('#mutations', () => {
     it('push contact data to the store', () => {
       const state = {
         records: {
-          1: { id: 1, name: 'contact1', email: 'contact1@alloochat.ai' },
+          1: { id: 1, name: 'contact1', email: 'contact1@aloochat.ai' },
         },
         sortOrder: [1],
       };
       mutations[types.SET_CONTACT_ITEM](state, {
         id: 2,
         name: 'contact2',
-        email: 'contact2@alloochat.ai',
+        email: 'contact2@aloochat.ai',
       });
       expect(state.records).toEqual({
-        1: { id: 1, name: 'contact1', email: 'contact1@alloochat.ai' },
-        2: { id: 2, name: 'contact2', email: 'contact2@alloochat.ai' },
+        1: { id: 1, name: 'contact1', email: 'contact1@aloochat.ai' },
+        2: { id: 2, name: 'contact2', email: 'contact2@aloochat.ai' },
       });
       expect(state.sortOrder).toEqual([1, 2]);
     });
@@ -51,16 +51,16 @@ describe('#mutations', () => {
     it('update contact', () => {
       const state = {
         records: {
-          1: { id: 1, name: 'contact1', email: 'contact1@alloochat.ai' },
+          1: { id: 1, name: 'contact1', email: 'contact1@aloochat.ai' },
         },
       };
       mutations[types.EDIT_CONTACT](state, {
         id: 1,
         name: 'contact2',
-        email: 'contact2@alloochat.ai',
+        email: 'contact2@aloochat.ai',
       });
       expect(state.records).toEqual({
-        1: { id: 1, name: 'contact2', email: 'contact2@alloochat.ai' },
+        1: { id: 1, name: 'contact2', email: 'contact2@aloochat.ai' },
       });
     });
   });

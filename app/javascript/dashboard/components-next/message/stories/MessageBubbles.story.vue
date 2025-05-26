@@ -119,7 +119,7 @@ const email = computed(() =>
           quoted:
             'Hi Team,\n\nI hope this email finds you well! I wanted to share some updates regarding\nour integration with *AlooChat* and outline some key features we’ve\nexplored.',
         },
-        to: ['shivam@alloochat.ai'],
+        to: ['shivam@aloochat.ai'],
       },
       ccEmail: null,
       bccEmail: null,

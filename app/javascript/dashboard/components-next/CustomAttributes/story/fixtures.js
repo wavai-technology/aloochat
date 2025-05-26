@@ -9,7 +9,7 @@ export default [
     attributeKey: 'linkContact',
     attributeDisplayName: 'URL Input',
     attributeDisplayType: 'link',
-    value: 'https://www.alloochat.ai',
+    value: 'https://www.aloochat.ai',
   },
   {
     attributeKey: 'numberContact',

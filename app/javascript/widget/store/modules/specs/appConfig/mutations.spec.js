@@ -4,8 +4,8 @@ describe('#mutations', () => {
   describe('#SET_REFERRER_HOST', () => {
     it('sets referrer host properly', () => {
       const state = { referrerHost: '' };
-      mutations.SET_REFERRER_HOST(state, 'www.alloochat.ai');
-      expect(state.referrerHost).toEqual('www.alloochat.ai');
+      mutations.SET_REFERRER_HOST(state, 'www.aloochat.ai');
+      expect(state.referrerHost).toEqual('www.aloochat.ai');
     });
   });
 

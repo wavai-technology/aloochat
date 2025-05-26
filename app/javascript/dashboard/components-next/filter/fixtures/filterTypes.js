@@ -567,7 +567,7 @@ export const sampleActiveFilters = [
   {
     attributeKey: 'email',
     filterOperator: 'does_not_contain',
-    values: 'test@alloochat.ai',
+    values: 'test@aloochat.ai',
     queryOperator: 'or',
   },
   {

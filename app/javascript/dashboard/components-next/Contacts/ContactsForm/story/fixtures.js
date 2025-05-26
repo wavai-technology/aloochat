@@ -1,7 +1,7 @@
 export const contactData = {
   id: 370,
   name: 'John Doe',
-  email: 'johndoe@alloochat.ai',
+  email: 'johndoe@aloochat.ai',
   phoneNumber: '+918634322418',
   additionalAttributes: {
     city: 'Kerala',
@@ -23,7 +23,7 @@ export const primaryContactList = [
   {
     id: 1,
     name: 'Jane Smith',
-    email: 'jane@alloochat.ai',
+    email: 'jane@aloochat.ai',
     thumbnail: '',
     label: '(ID: 1) Jane Smith',
     value: 1,
@@ -31,7 +31,7 @@ export const primaryContactList = [
   {
     id: 2,
     name: 'Mike Johnson',
-    email: 'mike@alloochat.ai',
+    email: 'mike@aloochat.ai',
     thumbnail: '',
     label: '(ID: 2) Mike Johnson',
     value: 2,
@@ -39,7 +39,7 @@ export const primaryContactList = [
   {
     id: 3,
     name: 'Sarah Wilson',
-    email: 'sarah@alloochat.ai',
+    email: 'sarah@aloochat.ai',
     thumbnail: '',
     label: '(ID: 3) Sarah Wilson',
     value: 3,

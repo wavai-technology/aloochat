@@ -5,7 +5,7 @@ RSpec.describe WebhookJob do
 
   subject(:job) { described_class.perform_later(url, payload, webhook_type) }
 
-  let(:url) { 'https://test.alloochat.ai' }
+  let(:url) { 'https://test.aloochat.ai' }
   let(:payload) { { name: 'test' } }
   let(:webhook_type) { :account_webhook }
 

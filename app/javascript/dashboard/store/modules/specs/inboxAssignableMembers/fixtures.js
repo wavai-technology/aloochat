@@ -2,9 +2,9 @@ export default [
   {
     id: 1,
     provider: 'email',
-    uid: 'agent1@alloochat.ai',
+    uid: 'agent1@aloochat.ai',
     name: 'Agent1',
-    email: 'agent1@alloochat.ai',
+    email: 'agent1@aloochat.ai',
     account_id: 1,
     created_at: '2019-11-18T02:21:06.225Z',
     updated_at: '2019-12-20T07:43:35.794Z',
@@ -15,9 +15,9 @@ export default [
   {
     id: 2,
     provider: 'email',
-    uid: 'agent2@alloochat.ai',
+    uid: 'agent2@aloochat.ai',
     name: 'Agent2',
-    email: 'agent2@alloochat.ai',
+    email: 'agent2@aloochat.ai',
     account_id: 1,
     created_at: '2019-11-18T02:21:06.225Z',
     updated_at: '2019-12-20T07:43:35.794Z',

@@ -4,16 +4,16 @@
     "description": "This is the API documentation for Chatwoot server.",
     "version": "1.0.0",
     "title": "Chatwoot",
-    "termsOfService": "https://www.alloochat.ai/terms-of-service/",
+    "termsOfService": "https://www.aloochat.ai/terms-of-service/",
     "contact": {
-      "email": "hello@alloochat.ai"
+      "email": "hello@aloochat.ai"
     },
     "license": {
       "name": "MIT License",
       "url": "https://opensource.org/licenses/MIT"
     }
   },
-  "host": "app.alloochat.ai",
+  "host": "app.aloochat.ai",
   "basePath": "/",
   "schemes": [
     "https"
@@ -6866,7 +6866,7 @@
         "homepage_link": {
           "type": "string",
           "description": "link to main dashboard",
-          "example": "https://www.alloochat.ai/"
+          "example": "https://www.aloochat.ai/"
         },
         "name": {
           "type": "string",
