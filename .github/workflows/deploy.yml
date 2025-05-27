@@ -137,6 +137,13 @@ jobs:
             SMTP_USERNAME: "${{ secrets.SMTP_USERNAME }}"
             SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
             DOMAIN: "${{ secrets.DOMAIN || 'cx.aloochat.ai' }}"
+            ACTIVE_STORAGE_SERVICE: "${{ secrets.ACTIVE_STORAGE_SERVICE }}"
+            S3_BUCKET_NAME: "${{ secrets.S3_BUCKET_NAME }}"
+            AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+            AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+            AWS_REGION: "${{ secrets.AWS_REGION }}"
+            OPENAI_API_KEY: "${{ secrets.OPENAI_API_KEY }}"
+            FORCE_SSL: "${{ secrets.FORCE_SSL }}"
           EOF
           kubectl create -f secret.yaml
           rm secret.yaml
