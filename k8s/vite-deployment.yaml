@@ -17,7 +17,7 @@ spec:
         image: wavai/chatwoot-vite
         imagePullPolicy: Always
         command: ["/bin/sh"]
-        args: ["-c", "docker/entrypoints/vite.sh && bin/vite dev --host 0.0.0.0 --port 3036"]
+        args: ["-c", "docker/entrypoints/vite.sh && cd /app && pnpm exec vite --host 0.0.0.0 --port 3036"]
         ports:
         - containerPort: 3036
         envFrom:
