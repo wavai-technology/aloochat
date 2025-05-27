@@ -1,6 +1,9 @@
 {
     "cSpell.words": [
         "chatwoot",
-        "dompurify"
+        "dompurify",
+        "mailhog",
+        "sidekiq",
+        "vite"
     ]
 }
