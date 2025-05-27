@@ -8,36 +8,14 @@ const globalConfig = useMapGetter('globalConfig/get');
 
 <template>
   <img
-    v-if="globalConfig.logoThumbnail"
+    v-if="globalConfig.mainLogo"
     v-bind="attrs"
-    :src="globalConfig.logoThumbnail"
+    :src="globalConfig.mainLogo"
   />
-  <svg
-    v-else
-    v-once
-    v-bind="attrs"
-    width="16"
-    height="16"
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <g clip-path="url(#woot-logo-clip-2342424e23u32098)">
-      <path
-        d="M8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16Z"
-        fill="#2781F6"
-      />
-      <path
-        d="M11.4172 11.4172H7.70831C5.66383 11.4172 4 9.75328 4 7.70828C4 5.66394 5.66383 4 7.70835 4C9.75339 4 11.4172 5.66394 11.4172 7.70828V11.4172Z"
-        fill="white"
-        stroke="white"
-        stroke-width="0.1875"
-      />
-    </g>
-    <defs>
-      <clipPath id="woot-logo-clip-2342424e23u32098">
-        <rect width="16" height="16" fill="white" />
-      </clipPath>
-    </defs>
+  <svg width="441" height="387" viewBox="0 0 441 387" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="386" height="386" rx="193" fill="#2E4AFF"/>
+    <path d="M194.588 285.373C194.588 235.17 233.173 194.483 280.754 194.483V191.517C233.155 191.517 194.588 150.83 194.588 100.627C194.588 99.8262 194.625 99.0438 194.643 98.2432H191.355C191.374 99.0438 191.411 99.8262 191.411 100.627C191.411 150.83 152.825 191.517 105.244 191.517V194.483C152.844 194.483 191.411 235.17 191.411 285.373C191.411 286.174 191.374 286.956 191.355 287.757H194.643C194.625 286.956 194.588 286.174 194.588 285.373Z" fill="#E2FF28"/>
+    <path d="M441 383.728C368.121 397.226 312.634 358.42 294 337.33L296.07 274.06C316.085 278.278 359.425 282.074 372.676 263.515C370.606 339.439 426.507 377.401 441 383.728Z" fill="#2E4AFF"/>
   </svg>
+
 </template>

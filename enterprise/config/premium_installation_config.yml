@@ -19,4 +19,6 @@
   value: 'https://www.aloochat.ai/privacy-policy'
 - name: DISPLAY_MANIFEST
   value: true
+- name: MAIN_LOGO
+  value: '/brand-assets/main-logo.svg'
 # ------- End of Branding Related Config ------- #
