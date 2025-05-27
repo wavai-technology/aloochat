@@ -148,7 +148,7 @@ jobs:
           kubectl create -f secret.yaml
           rm secret.yaml
       
-      - name: Deploy Chatwoot to Kubernetes in ingress-nginx namespace
+      - name: Deploy AlooChat to Kubernetes in ingress-nginx namespace
         run: |
           # Set namespace
           NAMESPACE=ingress-nginx
