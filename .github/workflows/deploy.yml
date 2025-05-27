@@ -26,29 +26,29 @@ jobs:
           username: ${{ env.DOCKER_USERNAME }}
           password: ${{ env.DOCKER_PASSWORD }}
       
-      - name: Build and push base image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./docker/Dockerfile
-          push: true
-          tags: ${{ env.DOCKER_REGISTRY }}/chatwoot-base:latest
+      # - name: Build and push base image
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: .
+      #     file: ./docker/Dockerfile
+      #     push: true
+      #     tags: ${{ env.DOCKER_REGISTRY }}/chatwoot-base:latest
       
-      - name: Build and push Rails image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./docker/dockerfiles/rails.Dockerfile
-          push: true
-          tags: ${{ env.DOCKER_USERNAME }}/chatwoot-rails:latest
+      # - name: Build and push Rails image
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: .
+      #     file: ./docker/dockerfiles/rails.Dockerfile
+      #     push: true
+      #     tags: ${{ env.DOCKER_REGISTRY }}/chatwoot-rails:latest
       
-      - name: Build and push Vite image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./docker/dockerfiles/vite.Dockerfile
-          push: true
-          tags: ${{ env.DOCKER_REGISTRY }}/chatwoot-vite:latest
+      # - name: Build and push Vite image
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: .
+      #     file: ./docker/dockerfiles/vite.Dockerfile
+      #     push: true
+      #     tags: ${{ env.DOCKER_REGISTRY }}/chatwoot-vite:latest
 
   deploy:
     needs: build-and-push

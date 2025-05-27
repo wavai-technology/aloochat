@@ -32,7 +32,7 @@ spec:
               name: chatwoot-secrets
               key: DATABASE_URL
         - name: VITE_DEV_SERVER_HOST
-          value: "chatwoot-vite"
+          value: "chatwoot-vite.default.svc.cluster.local"
         - name: VITE_DEV_SERVER_PORT
           value: "3036"
         - name: VITE_RUBY_HOST
@@ -56,12 +56,14 @@ spec:
           httpGet:
             path: /healthz
             port: 3000
+            scheme: HTTP
           initialDelaySeconds: 60
           periodSeconds: 10
         livenessProbe:
           httpGet:
             path: /healthz
             port: 3000
+            scheme: HTTP
           initialDelaySeconds: 90
           periodSeconds: 15
 ---
