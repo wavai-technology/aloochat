@@ -37,6 +37,9 @@ data:
   # Vite Configuration
   VITE_DEV_SERVER_HOST: "0.0.0.0"
   VITE_APP_URL: "https://cx.aloochat.ai"
+  VITE_RUBY_HOST: "cx.aloochat.ai"
+  VITE_RUBY_PORT: "443"
+  VITE_RUBY_HTTPS: "true"
 
   # Add other environment variables as needed
   ACTIVE_STORAGE_SERVICE: "${ACTIVE_STORAGE_SERVICE}"

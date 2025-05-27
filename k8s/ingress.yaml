@@ -15,7 +15,7 @@ spec:
     - host: cx.aloochat.ai
       http:
         paths:
-          - path: /vite
+          - path: /vite-dev
             pathType: Prefix
             backend:
               service:
