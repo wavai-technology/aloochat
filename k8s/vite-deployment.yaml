@@ -17,7 +17,7 @@ spec:
         image: wavai/chatwoot-vite
         imagePullPolicy: Always
         command: ["/bin/sh"]
-        args: ["-c", "docker/entrypoints/vite.sh && bin/vite dev"]
+        args: ["-c", "docker/entrypoints/vite.sh && bin/vite build && bin/vite preview"]
         ports:
         - containerPort: 3036
         envFrom:
@@ -32,6 +32,8 @@ spec:
           value: "production"
         - name: RAILS_ENV
           value: "production"
+        - name: VITE_PREVIEW_PORT
+          value: "3036"
         resources:
           requests:
             memory: "512Mi"
