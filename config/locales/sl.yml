@@ -199,14 +199,14 @@ sl:
       description: 'Aplikacije nadzorne plošče vam omogočajo, da ustvarite in vdelate aplikacije, ki prikazujejo uporabniške informacije, naročila ali zgodovino plačil, kar zagotavlja več konteksta vašim agentom za podporo strankam.'
     dyte:
       name: 'Dyte'
-      description: 'Dyte je rešitev, ki integrira avdio in video funkcije v vašo aplikacijo. S to integracijo lahko vaši agenti začnejo video/glasovne klice z vašimi strankami neposredno iz Chatwoota.'
+      description: 'Dyte je rešitev, ki integrira avdio in video funkcije v vašo aplikacijo. S to integracijo lahko vaši agenti začnejo video/glasovne klice z vašimi strankami neposredno iz AlooChata.'
       meeting_name: '%{agent_name} je začel sestanek'
     slack:
       name: 'Slack'
-      description: "Integrirajte Chatwoot s Slackom, da bo vaša ekipa sinhronizirana. Ta integracija vam omogoča prejemanje obvestil o novih pogovorih in odgovarjanje nanje neposredno v Slackovem vmesniku."
+      description: "Integrirajte AlooChat s Slackom, da bo vaša ekipa sinhronizirana. Ta integracija vam omogoča prejemanje obvestil o novih pogovorih in odgovarjanje nanje neposredno v Slackovem vmesniku."
     webhooks:
       name: 'Webhooks'
-      description: 'Dogodki Webhook zagotavljajo posodobitve v realnem času o dejavnostih v vašem računu Chatwoot. Naročite se lahko na želene dogodke in Chatwoot vam bo poslal povratne klice HTTP s posodobitvami.'
+      description: 'Dogodki Webhook zagotavljajo posodobitve v realnem času o dejavnostih v vašem računu AlooChat. Naročite se lahko na želene dogodke in AlooChat vam bo poslal povratne klice HTTP s posodobitvami.'
     dialogflow:
       name: 'Dialogflow'
       description: 'Ustvarite chatbote z Dialogflowom in jih preprosto integrirajte v svoj nabiralnik. Ti boti lahko obravnavajo začetne poizvedbe, preden jih prenesejo agentu za pomoč uporabnikom.'

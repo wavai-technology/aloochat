@@ -10,8 +10,7 @@ describe('#MessageFormatter', () => {
       );
     });
     it('should format correctly', () => {
-      const message =
-        'Chatwoot is an opensource tool. https://www.aloochat.ai';
+      const message = 'Chatwoot is an opensource tool. https://www.aloochat.ai';
       expect(new MessageFormatter(message).formattedMessage).toMatch(
         '<p>Chatwoot is an opensource tool. <a href="https://www.aloochat.ai" class="link" rel="noreferrer noopener nofollow" target="_blank">https://www.aloochat.ai</a></p>'
       );
