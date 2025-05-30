@@ -17,7 +17,7 @@ export const ONGOING_CAMPAIGN_EMPTY_STATE_CONTENT = [
     enabled: true,
     campaign_type: 'ongoing',
     trigger_rules: {
-      url: 'https://www.alloochat.ai/features/chatbot/',
+      url: 'https://www.aloochat.ai/features/chatbot/',
       time_on_page: 10,
     },
     trigger_only_during_business_hours: true,
@@ -42,7 +42,7 @@ export const ONGOING_CAMPAIGN_EMPTY_STATE_CONTENT = [
     enabled: false,
     campaign_type: 'ongoing',
     trigger_rules: {
-      url: 'https://www.alloochat.ai/pricings',
+      url: 'https://www.aloochat.ai/pricings',
       time_on_page: 10,
     },
     trigger_only_during_business_hours: false,
@@ -60,14 +60,14 @@ export const ONGOING_CAMPAIGN_EMPTY_STATE_CONTENT = [
     },
     sender: {
       id: 1,
-      name: 'Chatwoot',
+      name: 'AlooChat',
     },
-    message: 'Hi! Chatwoot here. Need help setting up? Let me know!',
+    message: 'Hi! AlooChat here. Need help setting up? Let me know!',
     campaign_status: 'active',
     enabled: false,
     campaign_type: 'ongoing',
     trigger_rules: {
-      url: 'https://{*.}?alloochat.ai/apps/account/*/settings/inboxes/new/',
+      url: 'https://{*.}?aloochat.ai/apps/account/*/settings/inboxes/new/',
       time_on_page: 10,
     },
     trigger_only_during_business_hours: false,

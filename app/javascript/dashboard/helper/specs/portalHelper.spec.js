@@ -4,11 +4,11 @@ describe('PortalHelper', () => {
   describe('buildPortalURL', () => {
     it('returns the correct url', () => {
       window.chatwootConfig = {
-        hostURL: 'https://app.alloochat.ai',
-        helpCenterURL: 'https://help.alloochat.ai',
+        hostURL: 'https://app.aloochat.ai',
+        helpCenterURL: 'https://help.aloochat.ai',
       };
       expect(buildPortalURL('handbook')).toEqual(
-        'https://help.alloochat.ai/hc/handbook'
+        'https://help.aloochat.ai/hc/handbook'
       );
       window.chatwootConfig = {};
     });
@@ -17,19 +17,19 @@ describe('PortalHelper', () => {
   describe('buildPortalArticleURL', () => {
     it('returns the correct url', () => {
       window.chatwootConfig = {
-        hostURL: 'https://app.alloochat.ai',
-        helpCenterURL: 'https://help.alloochat.ai',
+        hostURL: 'https://app.aloochat.ai',
+        helpCenterURL: 'https://help.aloochat.ai',
       };
       expect(
         buildPortalArticleURL('handbook', 'culture', 'fr', 'article-slug')
-      ).toEqual('https://help.alloochat.ai/hc/handbook/articles/article-slug');
+      ).toEqual('https://help.aloochat.ai/hc/handbook/articles/article-slug');
       window.chatwootConfig = {};
     });
 
     it('returns the correct url with custom domain', () => {
       window.chatwootConfig = {
-        hostURL: 'https://app.alloochat.ai',
-        helpCenterURL: 'https://help.alloochat.ai',
+        hostURL: 'https://app.aloochat.ai',
+        helpCenterURL: 'https://help.aloochat.ai',
       };
       expect(
         buildPortalArticleURL(
@@ -44,8 +44,8 @@ describe('PortalHelper', () => {
 
     it('handles https in custom domain correctly', () => {
       window.chatwootConfig = {
-        hostURL: 'https://app.alloochat.ai',
-        helpCenterURL: 'https://help.alloochat.ai',
+        hostURL: 'https://app.aloochat.ai',
+        helpCenterURL: 'https://help.aloochat.ai',
       };
       expect(
         buildPortalArticleURL(
@@ -60,12 +60,12 @@ describe('PortalHelper', () => {
 
     it('uses hostURL when helpCenterURL is not available', () => {
       window.chatwootConfig = {
-        hostURL: 'https://app.alloochat.ai',
+        hostURL: 'https://app.aloochat.ai',
         helpCenterURL: '',
       };
       expect(
         buildPortalArticleURL('handbook', 'culture', 'fr', 'article-slug')
-      ).toEqual('https://app.alloochat.ai/hc/handbook/articles/article-slug');
+      ).toEqual('https://app.aloochat.ai/hc/handbook/articles/article-slug');
     });
   });
 });

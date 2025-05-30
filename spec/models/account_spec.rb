@@ -74,23 +74,23 @@ RSpec.describe Account do
     let(:account) { create(:account) }
 
     it 'returns the support email from inbox if inbox value is present' do
-      account.update(support_email: 'support@alloochat.ai')
-      with_modified_env MAILER_SENDER_EMAIL: 'hello@alloochat.ai' do
-        expect(account.support_email).to eq('support@alloochat.ai')
+      account.update(support_email: 'support@aloochat.ai')
+      with_modified_env MAILER_SENDER_EMAIL: 'hello@aloochat.ai' do
+        expect(account.support_email).to eq('support@aloochat.ai')
       end
     end
 
     it 'returns the support email from ENV if inbox value is nil' do
       account.update(support_email: nil)
-      with_modified_env MAILER_SENDER_EMAIL: 'hello@alloochat.ai' do
-        expect(account.support_email).to eq('hello@alloochat.ai')
+      with_modified_env MAILER_SENDER_EMAIL: 'hello@aloochat.ai' do
+        expect(account.support_email).to eq('hello@aloochat.ai')
       end
     end
 
     it 'returns the support email from ENV if inbox value is empty string' do
       account.update(support_email: '')
-      with_modified_env MAILER_SENDER_EMAIL: 'hello@alloochat.ai' do
-        expect(account.support_email).to eq('hello@alloochat.ai')
+      with_modified_env MAILER_SENDER_EMAIL: 'hello@aloochat.ai' do
+        expect(account.support_email).to eq('hello@aloochat.ai')
       end
     end
   end

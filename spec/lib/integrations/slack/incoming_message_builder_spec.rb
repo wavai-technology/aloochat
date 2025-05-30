@@ -72,7 +72,7 @@ describe Integrations::Slack::IncomingMessageBuilder do
         allow(builder).to receive(:sender).and_return(nil)
         2.times.each { builder.perform }
         expect(conversation.messages.count).to eql(messages_count + 1)
-        expect(conversation.messages.last.content).to eql('this is test https://alloochat.ai Hey @Sojan Test again')
+        expect(conversation.messages.last.content).to eql('this is test https://aloochat.ai Hey @Sojan Test again')
       end
 
       it 'creates message' do
@@ -82,7 +82,7 @@ describe Integrations::Slack::IncomingMessageBuilder do
         allow(builder).to receive(:sender).and_return(nil)
         builder.perform
         expect(conversation.messages.count).to eql(messages_count + 1)
-        expect(conversation.messages.last.content).to eql('this is test https://alloochat.ai Hey @Sojan Test again')
+        expect(conversation.messages.last.content).to eql('this is test https://aloochat.ai Hey @Sojan Test again')
       end
 
       it 'creates a private note' do
@@ -142,7 +142,7 @@ describe Integrations::Slack::IncomingMessageBuilder do
         allow(builder).to receive(:sender).and_return(nil)
         builder.perform
         expect(conversation.messages.count).to eql(messages_count + 1)
-        expect(conversation.messages.last.content).to eql('this is test https://alloochat.ai Hey @Sojan Test again')
+        expect(conversation.messages.last.content).to eql('this is test https://aloochat.ai Hey @Sojan Test again')
         expect(conversation.messages.last.attachments).to be_any
       end
 
@@ -164,8 +164,8 @@ describe Integrations::Slack::IncomingMessageBuilder do
         {
           team_id: 'TLST3048H',
           api_app_id: 'A012S5UETV4',
-          event: link_shared_event.merge({ links: [{ url: "https://qa.alloochat.ai/app/accounts/1/conversations/#{conversation.display_id}",
-                                                     domain: 'qa.alloochat.ai' }] }),
+          event: link_shared_event.merge({ links: [{ url: "https://qa.aloochat.ai/app/accounts/1/conversations/#{conversation.display_id}",
+                                                     domain: 'qa.aloochat.ai' }] }),
           type: 'event_callback',
           event_time: 1_588_623_033
         }

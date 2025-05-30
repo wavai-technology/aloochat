@@ -39,13 +39,13 @@ describe('#buildPopoutURL', () => {
   it('returns popout URL', () => {
     expect(
       buildPopoutURL({
-        origin: 'https://alloochat.ai',
+        origin: 'https://aloochat.ai',
         conversationCookie: 'random-jwt-token',
         websiteToken: 'random-website-token',
         locale: 'ar',
       })
     ).toEqual(
-      'https://alloochat.ai/widget?cw_conversation=random-jwt-token&website_token=random-website-token&locale=ar'
+      'https://aloochat.ai/widget?cw_conversation=random-jwt-token&website_token=random-website-token&locale=ar'
     );
   });
 });

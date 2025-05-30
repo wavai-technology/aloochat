@@ -5,6 +5,7 @@ const {
   LOGO_THUMBNAIL: logoThumbnail,
   BRAND_NAME: brandName,
   WIDGET_BRAND_URL: widgetBrandURL,
+  MAIN_LOGO: mainLogo,
 } = window.globalConfig || {};
 
 export default {
@@ -21,6 +22,7 @@ export default {
         brandName,
         logoThumbnail,
         widgetBrandURL,
+        mainLogo,
       },
     };
   },
@@ -58,7 +60,7 @@ export default {
       <img
         class="ltr:mr-1 rtl:ml-1 max-w-3 max-h-3"
         :alt="globalConfig.brandName"
-        :src="globalConfig.logoThumbnail"
+        :src="globalConfig.logoThumbnail || globalConfig.mainLogo"
       />
       <span>
         {{ useInstallationName($t('POWERED_BY'), globalConfig.brandName) }}

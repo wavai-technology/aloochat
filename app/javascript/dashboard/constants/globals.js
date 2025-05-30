@@ -31,10 +31,10 @@ export default {
     CONDENSED: 'condensed',
     EXPANDED: 'expanded',
   },
-  DOCS_URL: 'https://www.alloochat.ai/docs/product/',
+  DOCS_URL: 'https://www.aloochat.ai/docs/product/',
   HELP_CENTER_DOCS_URL:
-    'https://www.alloochat.ai/docs/product/others/help-center',
-  TESTIMONIAL_URL: 'https://testimonials.cdn.alloochat.ai/content.json',
+    'https://www.aloochat.ai/docs/product/others/help-center',
+  TESTIMONIAL_URL: 'https://testimonials.cdn.aloochat.ai/content.json',
   SMALL_SCREEN_BREAKPOINT: 1200,
   AVAILABILITY_STATUS_KEYS: ['online', 'busy', 'offline'],
   SNOOZE_OPTIONS: {

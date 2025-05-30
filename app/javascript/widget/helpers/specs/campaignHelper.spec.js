@@ -13,29 +13,29 @@ describe('#Campaigns Helper', () => {
     it('returns correct value if a valid URL is passed', () => {
       expect(
         isPatternMatchingWithURL(
-          'https://alloochat.ai/pricing*',
-          'https://alloochat.ai/pricing/'
+          'https://aloochat.ai/pricing*',
+          'https://aloochat.ai/pricing/'
         )
       ).toBe(true);
 
       expect(
         isPatternMatchingWithURL(
-          'https://*.alloochat.ai/pricing/',
-          'https://app.alloochat.ai/pricing/'
+          'https://*.aloochat.ai/pricing/',
+          'https://app.aloochat.ai/pricing/'
         )
       ).toBe(true);
 
       expect(
         isPatternMatchingWithURL(
-          'https://{*.}?alloochat.ai/pricing?test=true',
-          'https://app.alloochat.ai/pricing/?test=true'
+          'https://{*.}?aloochat.ai/pricing?test=true',
+          'https://app.aloochat.ai/pricing/?test=true'
         )
       ).toBe(true);
 
       expect(
         isPatternMatchingWithURL(
-          'https://{*.}?alloochat.ai/pricing*\\?*',
-          'https://alloochat.ai/pricing/?test=true'
+          'https://{*.}?aloochat.ai/pricing*\\?*',
+          'https://aloochat.ai/pricing/?test=true'
         )
       ).toBe(true);
     });
@@ -48,13 +48,13 @@ describe('#Campaigns Helper', () => {
           id: 1,
           timeOnPage: 3,
           triggerOnlyDuringBusinessHours: false,
-          url: 'https://www.alloochat.ai/pricing',
+          url: 'https://www.aloochat.ai/pricing',
         },
         {
           id: 2,
           triggerOnlyDuringBusinessHours: false,
           timeOnPage: 6,
-          url: 'https://www.alloochat.ai/about',
+          url: 'https://www.aloochat.ai/about',
         },
       ]);
     });
@@ -67,23 +67,23 @@ describe('#Campaigns Helper', () => {
             {
               id: 1,
               timeOnPage: 3,
-              url: 'https://www.alloochat.ai/pricing',
+              url: 'https://www.aloochat.ai/pricing',
               triggerOnlyDuringBusinessHours: false,
             },
             {
               id: 2,
               timeOnPage: 6,
-              url: 'https://www.alloochat.ai/about',
+              url: 'https://www.aloochat.ai/about',
               triggerOnlyDuringBusinessHours: false,
             },
           ],
-          currentURL: 'https://www.alloochat.ai/about/',
+          currentURL: 'https://www.aloochat.ai/about/',
         })
       ).toStrictEqual([
         {
           id: 2,
           timeOnPage: 6,
-          url: 'https://www.alloochat.ai/about',
+          url: 'https://www.aloochat.ai/about',
           triggerOnlyDuringBusinessHours: false,
         },
       ]);
@@ -95,24 +95,24 @@ describe('#Campaigns Helper', () => {
             {
               id: 1,
               timeOnPage: 3,
-              url: 'https://www.alloochat.ai/pricing',
+              url: 'https://www.aloochat.ai/pricing',
               triggerOnlyDuringBusinessHours: false,
             },
             {
               id: 2,
               timeOnPage: 6,
-              url: 'https://www.alloochat.ai/about',
+              url: 'https://www.aloochat.ai/about',
               triggerOnlyDuringBusinessHours: true,
             },
           ],
-          currentURL: 'https://www.alloochat.ai/about/',
+          currentURL: 'https://www.aloochat.ai/about/',
           isInBusinessHours: true,
         })
       ).toStrictEqual([
         {
           id: 2,
           timeOnPage: 6,
-          url: 'https://www.alloochat.ai/about',
+          url: 'https://www.aloochat.ai/about',
           triggerOnlyDuringBusinessHours: true,
         },
       ]);
@@ -124,17 +124,17 @@ describe('#Campaigns Helper', () => {
             {
               id: 1,
               timeOnPage: 3,
-              url: 'https://www.alloochat.ai/pricing',
+              url: 'https://www.aloochat.ai/pricing',
               triggerOnlyDuringBusinessHours: true,
             },
             {
               id: 2,
               timeOnPage: 6,
-              url: 'https://www.alloochat.ai/about',
+              url: 'https://www.aloochat.ai/about',
               triggerOnlyDuringBusinessHours: true,
             },
           ],
-          currentURL: 'https://www.alloochat.ai/about/',
+          currentURL: 'https://www.aloochat.ai/about/',
           isInBusinessHours: false,
         })
       ).toStrictEqual([]);

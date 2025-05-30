@@ -13,6 +13,7 @@ const {
   INSTALLATION_NAME: installationName,
   LOGO_THUMBNAIL: logoThumbnail,
   LOGO: logo,
+  MAIN_LOGO: mainLogo,
   LOGO_DARK: logoDark,
   PRIVACY_URL: privacyURL,
   TERMS_URL: termsURL,
@@ -38,6 +39,7 @@ const state = {
   installationName,
   logo,
   logoDark,
+  mainLogo,
   logoThumbnail,
   privacyURL,
   termsURL,
@@ -46,9 +48,9 @@ const state = {
 
 export const getters = {
   get: $state => $state,
-  isOnChatwootCloud: $state => $state.deploymentEnv === 'cloud',
-  isACustomBrandedInstance: $state => $state.installationName !== 'Chatwoot',
-  isAChatwootInstance: $state => $state.installationName === 'Chatwoot',
+  isOnAlooChatCloud: $state => $state.deploymentEnv === 'cloud',
+  isACustomBrandedInstance: $state => $state.installationName !== 'AlooChat',
+  isAAlooChatInstance: $state => $state.installationName === 'AlooChat',
 };
 
 export const actions = {};

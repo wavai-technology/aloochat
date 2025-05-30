@@ -40,7 +40,7 @@ jobs:
           context: .
           file: ./docker/dockerfiles/rails.Dockerfile
           push: true
-          tags: ${{ env.DOCKER_USERNAME }}/chatwoot-rails:latest
+          tags: ${{ env.DOCKER_REGISTRY }}/chatwoot-rails:latest
       
       - name: Build and push Vite image
         uses: docker/build-push-action@v4
@@ -137,11 +137,18 @@ jobs:
             SMTP_USERNAME: "${{ secrets.SMTP_USERNAME }}"
             SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
             DOMAIN: "${{ secrets.DOMAIN || 'cx.aloochat.ai' }}"
+            ACTIVE_STORAGE_SERVICE: "${{ secrets.ACTIVE_STORAGE_SERVICE }}"
+            S3_BUCKET_NAME: "${{ secrets.S3_BUCKET_NAME }}"
+            AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+            AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+            AWS_REGION: "${{ secrets.AWS_REGION }}"
+            OPENAI_API_KEY: "${{ secrets.OPENAI_API_KEY }}"
+            FORCE_SSL: "${{ secrets.FORCE_SSL }}"
           EOF
           kubectl create -f secret.yaml
           rm secret.yaml
       
-      - name: Deploy Chatwoot to Kubernetes in ingress-nginx namespace
+      - name: Deploy AlooChat to Kubernetes in ingress-nginx namespace
         run: |
           # Set namespace
           NAMESPACE=ingress-nginx

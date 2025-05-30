@@ -27,9 +27,9 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: Describe whether you are using Chatwoot Cloud (app.alloochat.ai) or a self-hosted installation of Chatwoot. If you are using a self-hosted installation of Chatwoot, describe the type of deployment (Docker/Linux VM installation/Heroku/Kubernetes/Other).
+      description: Describe whether you are using AlooChat Cloud (app.aloochat.ai) or a self-hosted installation of AlooChat. If you are using a self-hosted installation of AlooChat, describe the type of deployment (Docker/Linux VM installation/Heroku/Kubernetes/Other).
       options:
-        - app.alloochat.ai
+        - app.aloochat.ai
         - Linux VM
         - Docker
         - Kubernetes

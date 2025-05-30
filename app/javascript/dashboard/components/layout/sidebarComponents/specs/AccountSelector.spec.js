@@ -13,7 +13,7 @@ const store = createStore({
         getCurrentAccountId: () => 1,
         getCurrentUser: () => ({
           accounts: [
-            { id: 1, name: 'Chatwoot', role: 'administrator' },
+            { id: 1, name: 'AlooChat', role: 'administrator' },
             { id: 2, name: 'GitX', role: 'agent' },
           ],
         }),

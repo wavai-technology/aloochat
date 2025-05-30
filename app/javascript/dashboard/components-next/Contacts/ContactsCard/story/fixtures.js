@@ -4,7 +4,7 @@ export default [
       socialProfiles: {},
     },
     availabilityStatus: null,
-    email: 'johndoe@alloochat.ai',
+    email: 'johndoe@aloochat.ai',
     id: 370,
     name: 'John Doe',
     phoneNumber: '+918634322418',
@@ -19,7 +19,7 @@ export default [
       city: 'kerala',
       country: 'India',
       description: 'Curious about the web. ',
-      companyName: 'Chatwoot',
+      companyName: 'AlooChat',
       countryCode: '',
       socialProfiles: {
         github: 'abozler',
@@ -30,7 +30,7 @@ export default [
       },
     },
     availabilityStatus: null,
-    email: 'ozler@alloochat.ai',
+    email: 'ozler@aloochat.ai',
     id: 29,
     name: 'Abraham Ozlers',
     phoneNumber: '+246232222222',
@@ -38,7 +38,7 @@ export default [
     thumbnail: 'https://api.dicebear.com/9.x/thumbs/svg?seed=Upload',
     customAttributes: {
       dateContact: '2024-02-01T00:00:00.000Z',
-      linkContact: 'https://staging.alloochat.ai/app/accounts/3/contacts-new',
+      linkContact: 'https://staging.aloochat.ai/app/accounts/3/contacts-new',
       listContact: 'Not spam',
       numberContact: '12',
     },
@@ -51,7 +51,7 @@ export default [
       country: 'India',
       description:
         "I'm Candice developer focusing on building things for the web 🌍. Currently, I’m working as a Product Developer here at @chatwootapp ⚡️🔥",
-      companyName: 'Chatwoot',
+      companyName: 'AlooChat',
       countryCode: 'IN',
       socialProfiles: {
         github: 'cmathersonj',

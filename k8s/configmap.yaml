@@ -35,7 +35,18 @@ data:
   SMTP_ENABLE_STARTTLS_AUTO: "true"
 
   # Vite Configuration
-  VITE_DEV_SERVER_HOST: "0.0.0.0"
+  VITE_DEV_SERVER_HOST: "localhost"
   VITE_APP_URL: "https://cx.aloochat.ai"
+  VITE_RUBY_HOST: "localhost"
+  VITE_RUBY_PORT: "3000"
+  VITE_RUBY_HTTPS: "false"
 
   # Add other environment variables as needed
+  ACTIVE_STORAGE_SERVICE: "${ACTIVE_STORAGE_SERVICE}"
+  S3_BUCKET_NAME: "${S3_BUCKET_NAME}"
+  AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+  AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+  AWS_REGION: "${AWS_REGION}"
+  OPENAI_API_KEY: "${OPENAI_API_KEY}"
+  FORCE_SSL: "${FORCE_SSL}"
+  

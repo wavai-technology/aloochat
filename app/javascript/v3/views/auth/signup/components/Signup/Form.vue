@@ -68,9 +68,9 @@ export default {
     ...mapGetters({ globalConfig: 'globalConfig/get' }),
     termsLink() {
       return this.$t('REGISTER.TERMS_ACCEPT')
-        .replace('https://www.alloochat.ai/terms', this.globalConfig.termsURL)
+        .replace('https://www.aloochat.ai/terms', this.globalConfig.termsURL)
         .replace(
-          'https://www.alloochat.ai/privacy-policy',
+          'https://www.aloochat.ai/privacy-policy',
           this.globalConfig.privacyURL
         );
     },

@@ -1,17 +1,17 @@
 {
   "name": "AlooChat",
   "description": "AlooChat is a customer support tool for instant messaging channels",
-  "website": "https://www.alloochat.ai/",
+  "website": "https://www.aloochat.ai/",
   "repository": "https://github.com/wavai-technology/bleep-chatwoot",
-  "logo": "https://app.alloochat.ai/brand-assets/logo_thumbnail.svg",
+  "logo": "https://app.aloochat.ai/brand-assets/logo_thumbnail.svg",
   "keywords": [
     "live chat",
     "customer support",
     "ruby",
     "rails",
     "vue",
-    "alloochat",
-    "alloochat.ai"
+    "aloochat",
+    "aloochat.ai"
   ],
   "success_url": "/",
   "env": {
