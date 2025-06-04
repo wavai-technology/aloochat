@@ -9,7 +9,7 @@ data:
   RAILS_SERVE_STATIC_FILES: "true"
   BUNDLE_WITHOUT: ""
   EXECJS_RUNTIME: "Node"
-  INSTALLATION_NAME: "Chatwoot"
+  INSTALLATION_NAME: "AlooChat"
   FRONTEND_URL: "https://cx.aloochat.ai"
   DOMAIN: "cx.aloochat.ai"
 

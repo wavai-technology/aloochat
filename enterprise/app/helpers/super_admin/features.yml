@@ -3,27 +3,27 @@
 captain:
   name: 'Captain'
   description: 'Enable AI-powered conversations with your customers.'
-  enabled: <%= (AlooChatHub.pricing_plan != 'community') %>
+  enabled: <%= (ChatwootHub.pricing_plan != 'community') %>
   icon: 'icon-captain'
   config_key: 'captain'
   enterprise: true
 custom_branding:
   name: 'Custom Branding'
   description: 'Apply your own branding to this installation.'
-  enabled: <%= (AlooChatHub.pricing_plan != 'community') %>
+  enabled: <%= (ChatwootHub.pricing_plan != 'community') %>
   icon: 'icon-paint-brush-line'
   config_key: 'custom_branding'
   enterprise: true
 agent_capacity:
   name: 'Agent Capacity'
   description: 'Set limits to auto-assigning conversations to your agents.'
-  enabled: <%= (AlooChatHub.pricing_plan != 'community') %>
+  enabled: <%= (ChatwootHub.pricing_plan != 'community') %>
   icon: 'icon-hourglass-line'
   enterprise: true
 audit_logs:
   name: 'Audit Logs'
   description: 'Track and trace account activities with ease with detailed audit logs.'
-  enabled: <%= (AlooChatHub.pricing_plan != 'community') %>
+  enabled: <%= (ChatwootHub.pricing_plan != 'community') %>
   icon: 'icon-menu-search-line'
   enterprise: true
 disable_branding:
