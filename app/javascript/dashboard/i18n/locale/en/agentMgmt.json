@@ -23,7 +23,7 @@
     },
     "ADD": {
       "TITLE": "Add agent to your team",
-      "DESC": "You can add people who will be able to handle support for your inboxes.",
+      "DESC": "You can add people or AI agents who will be able to handle support for your inboxes.",
       "CANCEL_BUTTON_TEXT": "Cancel",
       "FORM": {
         "NAME": {
@@ -31,9 +31,15 @@
           "PLACEHOLDER": "Please enter a name of the agent"
         },
         "AGENT_TYPE": {
-          "LABEL": "Role",
-          "PLACEHOLDER": "Please select a role",
-          "ERROR": "Role is required"
+          "LABEL": "Agent Type",
+          "PLACEHOLDER": "Please select an agent type",
+          "ERROR": "Agent type is required",
+          "HUMAN": "Human Agent",
+          "AI": "AI Agent",
+          "HUMAN_DESC": "Traditional support agent for personalized customer service",
+          "AI_DESC": "AI-powered agent for automated, instant responses",
+          "HUMAN_ICON": "👤",
+          "AI_ICON": "🤖"
         },
         "EMAIL": {
           "LABEL": "Email Address",
@@ -44,7 +50,11 @@
       "API": {
         "SUCCESS_MESSAGE": "Agent added successfully",
         "EXIST_MESSAGE": "Agent email already in use, Please try another email address",
-        "ERROR_MESSAGE": "Could not connect to Woot Server, Please try again later"
+        "ERROR_MESSAGE": "Could not connect to Woot Server, Please try again later",
+        "BLEEP_FETCH_ERROR": "Could not fetch AI agents from Bleep platform",
+        "BLEEP_SUCCESS_MESSAGE": "AI agent added successfully",
+        "BLEEP_ERROR_MESSAGE": "Could not add AI agent, Please try again later",
+        "HUMAN_AGENTS_FETCH_ERROR": "Could not fetch human agents list"
       }
     },
     "DELETE": {
@@ -117,6 +127,33 @@
           "AGENT": "Search agents",
           "TEAM": "Search teams",
           "INPUT": "Search for agents"
+        }
+      }
+    },
+    "BLEEP_AGENT": {
+      "TITLE": "Add AI Agent",
+      "DESC": "Configure an AI agent from the Bleep platform",
+      "FORM": {
+        "AI_AGENT": {
+          "LABEL": "Select AI Agent",
+          "PLACEHOLDER": "Choose an AI agent from Bleep",
+          "ERROR": "AI agent selection is required"
+        },
+        "REGION": {
+          "LABEL": "Deployment Region",
+          "PLACEHOLDER": "Select deployment region",
+          "ERROR": "Region selection is required"
+        },
+        "CHANNEL": {
+          "LABEL": "Communication Channel",
+          "PLACEHOLDER": "Select communication channel",
+          "ERROR": "Channel selection is required"
+        },
+        "HUMAN_AGENT": {
+          "LABEL": "Backup Human Agent",
+          "PLACEHOLDER": "Select backup human agent",
+          "ERROR": "Backup human agent is required",
+          "HELP_TEXT": "This agent will handle conversations when AI needs assistance"
         }
       }
     }
