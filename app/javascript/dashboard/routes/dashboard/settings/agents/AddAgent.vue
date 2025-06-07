@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-parsing-error -->
 <script setup>
 import { ref, computed } from 'vue';
 import { useStore, useMapGetter } from 'dashboard/composables/store';
@@ -6,12 +7,14 @@ import { useAlert } from 'dashboard/composables';
 import { useVuelidate } from '@vuelidate/core';
 import { required, email } from '@vuelidate/validators';
 import Button from 'dashboard/components-next/button/Button.vue';
+import AddBleepAgent from './AddBleepAgent.vue';
 
 const emit = defineEmits(['close']);
 
 const store = useStore();
 const { t } = useI18n();
 
+const isAIAgent = ref(false);
 const agentName = ref('');
 const agentEmail = ref('');
 const selectedRoleId = ref('agent');
@@ -108,7 +111,43 @@ const addAgent = async () => {
       :header-title="$t('AGENT_MGMT.ADD.TITLE')"
       :header-content="$t('AGENT_MGMT.ADD.DESC')"
     />
-    <form class="flex flex-col items-start w-full" @submit.prevent="addAgent">
+
+    <div class="w-full px-8 py-2">
+      <div class="flex gap-2 w-full">
+        <label class="type-option" :class="{ 'is-selected': !isAIAgent }">
+          <input
+            v-model="isAIAgent"
+            type="radio"
+            :value="false"
+            class="hidden"
+          />
+          <div class="option-content">
+            <i class="ri-user-smile-line text-lg" />
+            {{ $t('AGENT_MGMT.ADD.FORM.AGENT_TYPE.HUMAN') }}
+          </div>
+        </label>
+        <label class="type-option" :class="{ 'is-selected': isAIAgent }">
+          <input
+            v-model="isAIAgent"
+            type="radio"
+            :value="true"
+            class="hidden"
+          />
+          <div class="option-content">
+            <i class="ri-brain-line text-lg" />
+            {{ $t('AGENT_MGMT.ADD.FORM.AGENT_TYPE.AI') }}
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <AddBleepAgent v-if="isAIAgent" @close="emit('close')" />
+
+    <form
+      v-else
+      class="flex flex-col items-start w-full"
+      @submit.prevent="addAgent"
+    >
       <div class="w-full">
         <label :class="{ error: v$.agentName.$error }">
           {{ $t('AGENT_MGMT.ADD.FORM.NAME.LABEL') }}
@@ -165,3 +204,41 @@ const addAgent = async () => {
     </form>
   </div>
 </template>
+
+<style scoped>
+.type-option {
+  flex: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 0.375rem;
+  background-color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #475569;
+  transition: all 0.2s ease;
+}
+
+.type-option:hover .option-content {
+  border-color: #94a3b8;
+  background-color: #f8fafc;
+}
+
+.is-selected .option-content {
+  border-color: #1d4ed8;
+  background-color: #eff6ff;
+  color: #1d4ed8;
+}
+
+.is-selected i {
+  color: #1d4ed8;
+}
+</style>
