@@ -112,7 +112,7 @@ const addAgent = async () => {
       :header-content="$t('AGENT_MGMT.ADD.DESC')"
     />
 
-    <div class="w-full px-10 py-2">
+    <div class="w-full px-8 py-2">
       <div class="flex gap-2 w-full">
         <label class="type-option" :class="{ 'is-selected': !isAIAgent }">
           <input

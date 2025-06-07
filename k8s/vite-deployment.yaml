@@ -2,8 +2,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: chatwoot-vite
+  annotations:
+    kubernetes.io/change-cause: "Initial deployment"
+    container.apparmor.security.beta.kubernetes.io/vite: runtime/default
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: chatwoot-vite
@@ -11,10 +19,12 @@ spec:
     metadata:
       labels:
         app: chatwoot-vite
+      annotations:
+        timestamp: "0"
     spec:
       containers:
       - name: vite
-        image: wavai/chatwoot-vite
+        image: wavai/chatwoot-vite:latest
         imagePullPolicy: Always
         command: ["/bin/sh"]
         args: ["-c", "docker/entrypoints/vite.sh && cd /app && pnpm exec vite --host 0.0.0.0 --port 3036"]
