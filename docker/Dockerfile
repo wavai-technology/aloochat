@@ -7,6 +7,9 @@ ARG PNPM_VERSION="10.2.0"
 ENV NODE_VERSION=${NODE_VERSION}
 ENV PNPM_VERSION=${PNPM_VERSION}
 
+# Install system dependencies for ruby-vips
+RUN apk add --no-cache vips vips-dev
+
 # ARG default to production settings
 # For development docker-compose file overrides ARGS
 ARG BUNDLE_WITHOUT="development:test"
