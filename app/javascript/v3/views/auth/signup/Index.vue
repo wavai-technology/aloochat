@@ -64,7 +64,7 @@ export default {
               {{
                 useInstallationName(
                   $t('LOGIN.TITLE'),
-                  globalConfig.installationName
+                  "AlooChat"
                 )
               }}
             </router-link>
