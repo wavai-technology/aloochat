@@ -85,7 +85,7 @@ const confirmDeletion = () => {
           {{
             useInstallationName(
               integrationDescription,
-              globalConfig.installationName
+              "AlooChat"
             )
           }}
         </p>

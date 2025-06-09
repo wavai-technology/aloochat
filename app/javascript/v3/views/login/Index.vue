@@ -171,7 +171,7 @@ export default {
       />
       <h2 class="mt-6 text-3xl font-medium text-center text-n-slate-12">
         {{
-          useInstallationName($t('LOGIN.TITLE'), globalConfig.installationName)
+          useInstallationName($t('LOGIN.TITLE'), "AlooChat")
         }}
       </h2>
       <p v-if="showSignupLink" class="mt-3 text-sm text-center text-n-slate-11">

@@ -35,7 +35,7 @@ const formattedErrorMessage = computed(() => {
   return formatMessage(
     useInstallationName(
       errorDescription.value,
-      globalConfig.value.installationName
+      "AlooChat"
     ),
     false
   );

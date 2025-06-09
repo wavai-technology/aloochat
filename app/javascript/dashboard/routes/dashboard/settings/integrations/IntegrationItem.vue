@@ -80,7 +80,7 @@ const actionURL = computed(() =>
         </router-link>
       </div>
       <p class="text-n-slate-11">
-        {{ useInstallationName(description, globalConfig.installationName) }}
+        {{ useInstallationName(description, "AlooChat") }}
       </p>
     </div>
   </div>

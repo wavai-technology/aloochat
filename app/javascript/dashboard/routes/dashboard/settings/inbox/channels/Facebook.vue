@@ -226,7 +226,7 @@ export default {
         {{
           useInstallationName(
             $t('INBOX_MGMT.ADD.FB.HELP'),
-            globalConfig.installationName
+            "AlooChat"
           )
         }}
       </p>
@@ -251,7 +251,7 @@ export default {
             :header-content="
               useInstallationName(
                 $t('INBOX_MGMT.ADD.DETAILS.DESC'),
-                globalConfig.installationName
+                "AlooChat"
               )
             "
           />
