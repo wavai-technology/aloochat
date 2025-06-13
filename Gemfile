@@ -178,8 +178,6 @@ gem 'ruby-openai'
 
 gem 'shopify_api'
 
-gem 'svix', '~> 1.16'
-
 ### Gems required only in specific deployment environments ###
 ##############################################################
 
