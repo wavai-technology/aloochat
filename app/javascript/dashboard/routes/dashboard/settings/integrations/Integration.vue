@@ -30,7 +30,7 @@ const router = useRouter();
 const dialogRef = ref(null);
 
 const accountId = computed(() => store.getters.getCurrentAccountId);
-const globalConfig = computed(() => store.getters['globalConfig/get']);
+// const globalConfig = computed(() => store.getters['globalConfig/get']);
 
 const openDeletePopup = () => {
   if (dialogRef.value) {
@@ -82,12 +82,7 @@ const confirmDeletion = () => {
           {{ integrationName }}
         </h3>
         <p class="text-n-slate-11 text-sm leading-6">
-          {{
-            useInstallationName(
-              integrationDescription,
-              "AlooChat"
-            )
-          }}
+          {{ useInstallationName(integrationDescription, 'AlooChat') }}
         </p>
       </div>
     </div>
