@@ -18,39 +18,9 @@ const selectedHumanAgent = ref(null);
 const selectedChannel = ref('');
 
 // Data lists
-const aiAgents = ref([
-  {
-    id: 'bleep-cs-1',
-    name: 'Customer Support AI',
-    description:
-      'General customer service AI agent trained on support documentation',
-    capabilities: [
-      'ticket_classification',
-      'general_support',
-      'product_inquiries',
-    ],
-    language: ['en'],
-    response_time: '< 1s',
-  },
-  {
-    id: 'bleep-tech-2',
-    name: 'Technical Support AI',
-    description:
-      'Specialized in technical troubleshooting and developer support',
-    capabilities: ['code_debugging', 'api_support', 'technical_documentation'],
-    language: ['en', 'es'],
-    response_time: '< 2s',
-  },
-  {
-    id: 'bleep-sales-3',
-    name: 'Sales Assistant AI',
-    description: 'Trained for product recommendations and sales inquiries',
-    capabilities: ['product_recommendations', 'pricing_inquiries', 'upselling'],
-    language: ['en', 'fr', 'de'],
-    response_time: '< 1s',
-  },
-]);
+const aiAgents = ref([]);
 const humanAgents = ref([]);
+const isLoadingAIAgents = ref(false);
 
 // Validation rules
 const rules = {
@@ -67,18 +37,30 @@ const v$ = useVuelidate(rules, {
   selectedChannel,
 });
 
-// Fetch AI agents from Bleep platform
-// const fetchBleepAgents = async () => {
-//   try {
-//     // TODO: Replace with actual API call to Bleep platform
-//     const response = await fetch('YOUR_BLEEP_API_ENDPOINT/agents');
-//     aiAgents.value = await response.json();
-//   } catch (error) {
-//     useAlert(t('AGENT_MGMT.ADD.API.BLEEP_FETCH_ERROR'));
-//   }
-// };
+// Fetch deployed AI agents from backend
+const fetchAloostudioAgents = async () => {
+  isLoadingAIAgents.value = true;
+  try {
+    const deployments = await store.dispatch(
+      'agents/fetchAloostudioDeployments'
+    );
 
-// Fetch human agents
+    aiAgents.value = deployments.map(d => ({
+      id: d.agent_id || d.id,
+      name: d.agent?.title || 'AI Agent',
+      description: d.agent?.welcome_message || '',
+      capabilities: d.agent?.category_names || [],
+      language: d.agent?.languages || [],
+      response_time: d.agent?.response_time || '',
+      raw: d,
+    }));
+  } catch (error) {
+    useAlert(t('AGENT_MGMT.ADD.API.BLEEP_FETCH_ERROR'));
+  } finally {
+    isLoadingAIAgents.value = false;
+  }
+};
+
 const fetchHumanAgents = async () => {
   try {
     const response = await store.dispatch('agents/get');
@@ -88,7 +70,6 @@ const fetchHumanAgents = async () => {
   }
 };
 
-// Add Bleep Agent
 const addBleepAgent = async () => {
   v$.value.$touch();
   if (v$.value.$invalid) return;
@@ -110,7 +91,7 @@ const addBleepAgent = async () => {
 };
 
 onMounted(() => {
-  //   fetchBleepAgents();
+  fetchAloostudioAgents();
   fetchHumanAgents();
 });
 </script>

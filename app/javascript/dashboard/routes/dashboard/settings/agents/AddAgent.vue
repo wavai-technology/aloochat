@@ -7,7 +7,7 @@ import { useAlert } from 'dashboard/composables';
 import { useVuelidate } from '@vuelidate/core';
 import { required, email } from '@vuelidate/validators';
 import Button from 'dashboard/components-next/button/Button.vue';
-import AddBleepAgent from './AddBleepAgent.vue';
+import AddAIAgent from './AddAIAgent.vue';
 
 const emit = defineEmits(['close']);
 
@@ -141,7 +141,7 @@ const addAgent = async () => {
       </div>
     </div>
 
-    <AddBleepAgent v-if="isAIAgent" @close="emit('close')" />
+    <AddAIAgent v-if="isAIAgent" @close="emit('close')" />
 
     <form
       v-else

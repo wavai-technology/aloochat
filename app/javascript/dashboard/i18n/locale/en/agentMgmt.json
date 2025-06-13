@@ -132,11 +132,11 @@
     },
     "BLEEP_AGENT": {
       "TITLE": "Add AI Agent",
-      "DESC": "Configure an AI agent from the Bleep platform",
+      "DESC": "Configure an AI agent from the AlooStudio platform",
       "FORM": {
         "AI_AGENT": {
           "LABEL": "Select AI Agent",
-          "PLACEHOLDER": "Choose an AI agent from Bleep",
+          "PLACEHOLDER": "Choose an AI agent from AlooStudio",
           "ERROR": "AI agent selection is required"
         },
         "REGION": {

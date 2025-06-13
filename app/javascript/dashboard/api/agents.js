@@ -12,6 +12,14 @@ class Agents extends ApiClient {
       emails,
     });
   }
+
+  // Fetch deployed AI agents from backend
+  // eslint-disable-next-line class-methods-use-this
+  fetchAloostudioDeployments() {
+    // We are reusing the agents API client, so we need to replace 'agents' with 'aloostudio_agents' in the URL
+    const url = this.url.replace('agents', 'aloostudio_agents');
+    return axios.get(url);
+  }
 }
 
 export default new Agents();

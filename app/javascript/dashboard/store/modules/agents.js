@@ -4,17 +4,22 @@ import AgentAPI from '../../api/agents';
 
 export const state = {
   records: [],
+  aloostudioDeployments: [],
   uiFlags: {
     isFetching: false,
     isCreating: false,
     isUpdating: false,
     isDeleting: false,
+    isFetchingAloostudio: false,
   },
 };
 
 export const getters = {
   getAgents($state) {
     return $state.records;
+  },
+  getAloostudioDeployments($state) {
+    return $state.aloostudioDeployments;
   },
   getVerifiedAgents($state) {
     return $state.records.filter(record => record.confirmed);
@@ -45,10 +50,12 @@ export const actions = {
     commit(types.default.SET_AGENT_FETCHING_STATUS, true);
     try {
       const response = await AgentAPI.get();
-      commit(types.default.SET_AGENT_FETCHING_STATUS, false);
       commit(types.default.SET_AGENTS, response.data);
+      commit(types.default.SET_AGENT_FETCHING_STATUS, false);
+      return response.data;
     } catch (error) {
       commit(types.default.SET_AGENT_FETCHING_STATUS, false);
+      throw error;
     }
   },
   create: async ({ commit }, agentInfo) => {
@@ -93,6 +100,18 @@ export const actions = {
       throw new Error(error);
     }
   },
+  async fetchAloostudioDeployments({ commit }) {
+    commit('SET_FETCHING_ALOOSTUDIO', true);
+    try {
+      const response = await AgentAPI.fetchAloostudioDeployments();
+      commit('SET_ALOOSTUDIO_DEPLOYMENTS', response.data.deployments || []);
+      commit('SET_FETCHING_ALOOSTUDIO', false);
+      return response.data.deployments || [];
+    } catch (error) {
+      commit('SET_FETCHING_ALOOSTUDIO', false);
+      throw error;
+    }
+  },
 };
 
 export const mutations = {
@@ -122,6 +141,12 @@ export const mutations = {
       id,
       availabilityStatus,
     }),
+  SET_ALOOSTUDIO_DEPLOYMENTS($state, deployments) {
+    $state.aloostudioDeployments = deployments;
+  },
+  SET_FETCHING_ALOOSTUDIO($state, status) {
+    $state.uiFlags.isFetchingAloostudio = status;
+  },
 };
 
 export default {
