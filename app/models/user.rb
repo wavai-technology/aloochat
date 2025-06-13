@@ -30,9 +30,11 @@
 #  unconfirmed_email      :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  clerk_user_id          :string
 #
 # Indexes
 #
+#  index_users_on_clerk_user_id         (clerk_user_id) UNIQUE WHERE (clerk_user_id IS NOT NULL)
 #  index_users_on_email                 (email)
 #  index_users_on_pubsub_token          (pubsub_token) UNIQUE
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE

@@ -30,7 +30,35 @@ class Api::V1::AccountsController < Api::BaseController
       locale: account_params[:locale],
       user: current_user
     ).perform
+
     if @user
+      # Prepare data for ALOOSTUDIO webhook
+      first_name, last_name = (account_params[:user_full_name] || '').split(' ', 2)
+      payload = {
+        firstName: first_name,
+        lastName: last_name,
+        email: account_params[:email],
+        password: account_params[:password],
+        companyName: account_params[:account_name]
+      }
+      webhook_url = ENV.fetch('ALOOSTUDIO_WEBHOOK_URL', nil)
+      api_token = ENV.fetch('ALOOSTUDIO_API_TOKEN', nil)
+      webhook_response = nil
+      begin
+        conn = Faraday.new do |f|
+          f.request :json
+          f.response :json, content_type: /json$/
+          f.adapter Faraday.default_adapter
+        end
+        response = conn.post(webhook_url, payload) do |req|
+          req.headers['x-api-token'] = api_token
+          req.headers['Content-Type'] = 'application/json'
+        end
+        webhook_response = response.body
+        @user.update(clerk_user_id: webhook_response['clerkId']) if webhook_response['success'] && webhook_response['clerkId']
+      rescue StandardError => e
+        Rails.logger.error("ALOOSTUDIO webhook call failed: #{e.message}")
+      end
       send_auth_headers(@user)
       render 'api/v1/accounts/create', format: :json, locals: { resource: @user }
     else
