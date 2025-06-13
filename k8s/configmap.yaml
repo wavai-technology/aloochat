@@ -27,22 +27,13 @@ data:
   REDIS_PORT: "${REDIS_PORT}"
 
   # SMTP Configuration
-  SMTP_ADDRESS: "smtp.eu.mailgun.org"
-  SMTP_PORT: "587"
-  SMTP_DOMAIN: "mg.aloochat.ai"
-  SMTP_USERNAME: "accounts@mg.aloochat.ai"
-  SMTP_PASSWORD: "${SMTP_PASSWORD}"
+  SMTP_ADDRESS: "chatwoot-mailhog"
+  SMTP_PORT: "1025"
+  SMTP_DOMAIN: "localhost"
+  SMTP_USERNAME: "${SMTP_USERNAME}"
   SMTP_AUTHENTICATION: "plain"
   SMTP_ENABLE_STARTTLS_AUTO: "true"
-  MAILER_SENDER_EMAIL: "AlooChat <accounts@mg.aloochat.ai>"
-  SMTP_OPENSSL_VERIFY_MODE: "peer"
-  MAILER_INBOUND_EMAIL_DOMAIN: "mg.aloochat.ai"
-  RAILS_INBOUND_EMAIL_SERVICE: "mailgun"
 
-  # AlooStudio Configuration
-  CLERK_WEBHOOK_SECRET: "${CLERK_WEBHOOK_SECRET}"
-  ALOOSTUDIO_API_TOKEN: "${ALOOSTUDIO_API_TOKEN}"
-  ALOOSTUDIO_WEBHOOK_URL: "${ALOOSTUDIO_WEBHOOK_URL}"
   # Vite Configuration
   VITE_DEV_SERVER_HOST: "localhost"
   VITE_APP_URL: "https://cx.aloochat.ai"
@@ -58,6 +49,4 @@ data:
   AWS_REGION: "${AWS_REGION}"
   OPENAI_API_KEY: "${OPENAI_API_KEY}"
   FORCE_SSL: "${FORCE_SSL}"
-
-
   

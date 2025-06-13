@@ -29,11 +29,14 @@ const errorDescription = computed(() => {
     ? t('INTEGRATION_SETTINGS.SLACK.SELECT_CHANNEL.DESCRIPTION')
     : t('INTEGRATION_SETTINGS.SLACK.SELECT_CHANNEL.EXPIRED');
 });
-// const globalConfig = computed(() => store.getters['globalConfig/get']);
+const globalConfig = computed(() => store.getters['globalConfig/get']);
 
 const formattedErrorMessage = computed(() => {
   return formatMessage(
-    useInstallationName(errorDescription.value, 'AlooChat'),
+    useInstallationName(
+      errorDescription.value,
+      "AlooChat"
+    ),
     false
   );
 });

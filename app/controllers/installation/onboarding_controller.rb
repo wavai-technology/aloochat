@@ -5,7 +5,7 @@ class Installation::OnboardingController < ApplicationController
 
   def create
     begin
-      @user, @account = AccountBuilder.new(
+      AccountBuilder.new(
         account_name: onboarding_params.dig(:user, :company),
         user_full_name: onboarding_params.dig(:user, :name),
         email: onboarding_params.dig(:user, :email),
@@ -13,38 +13,6 @@ class Installation::OnboardingController < ApplicationController
         super_admin: true,
         confirmed: true
       ).perform
-
-      if @user
-        # Prepare data for ALOOSTUDIO webhook
-        first_name, last_name = (onboarding_params.dig(:user, :name) || '').split(' ', 2)
-        payload = {
-          firstName: first_name,
-          lastName: last_name,
-          email: onboarding_params.dig(:user, :email),
-          password: params.dig(:user, :password),
-          companyName: onboarding_params.dig(:user, :company)
-        }
-        webhook_url = ENV.fetch('ALOOSTUDIO_WEBHOOK_URL', nil)
-        api_token = ENV.fetch('ALOOSTUDIO_API_TOKEN', nil)
-        webhook_response = nil
-        begin
-          conn = Faraday.new do |f|
-            f.request :json
-            f.response :json, content_type: /json$/
-            f.adapter Faraday.default_adapter
-          end
-          response = conn.post(webhook_url, payload) do |req|
-            req.headers['x-api-token'] = api_token
-            req.headers['Content-Type'] = 'application/json'
-          end
-          webhook_response = response.body
-          @user.update(clerk_user_id: webhook_response['clerkId']) if webhook_response['success'] && webhook_response['clerkId']
-        rescue StandardError => e
-          Rails.logger.error("ALOOSTUDIO webhook call failed: #{e.message}")
-        end
-      else
-        render_error_response(CustomExceptions::Account::SignupFailed.new({}))
-      end
     rescue StandardError => e
       redirect_to '/', flash: { error: e.message } and return
     end

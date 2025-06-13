@@ -63,7 +63,7 @@ export default {
         :src="globalConfig.logoThumbnail || globalConfig.mainLogo"
       />
       <span>
-        {{ useInstallationName($t('POWERED_BY'), 'AlooChat') }}
+        {{ useInstallationName($t('POWERED_BY'), "AlooChat") }}
       </span>
     </a>
   </div>

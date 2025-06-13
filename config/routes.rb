@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   # Health check endpoints for Kubernetes
   get '/health', to: 'kubernetes_health#health'
   get '/healthz', to: 'kubernetes_health#health'
-
+  
   # AUTH STARTS
   mount_devise_token_auth_for 'User', at: 'auth', controllers: {
     confirmations: 'devise_overrides/confirmations',
@@ -471,7 +471,6 @@ Rails.application.routes.draw do
   post 'webhooks/whatsapp/:phone_number', to: 'webhooks/whatsapp#process_payload'
   get 'webhooks/instagram', to: 'webhooks/instagram#verify'
   post 'webhooks/instagram', to: 'webhooks/instagram#events'
-  post 'webhooks/clerk', to: 'api/v1/webhooks/clerk#create'
 
   namespace :twitter do
     resource :callback, only: [:show]
