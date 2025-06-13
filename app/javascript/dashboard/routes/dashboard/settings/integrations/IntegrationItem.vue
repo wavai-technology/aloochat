@@ -28,7 +28,7 @@ const props = defineProps({
 
 const getters = useStoreGetters();
 const accountId = getters.getCurrentAccountId;
-const globalConfig = getters['globalConfig/get'];
+// const globalConfig = getters['globalConfig/get'];
 
 const { t } = useI18n();
 
@@ -80,7 +80,7 @@ const actionURL = computed(() =>
         </router-link>
       </div>
       <p class="text-n-slate-11">
-        {{ useInstallationName(description, "AlooChat") }}
+        {{ useInstallationName(description, 'AlooChat') }}
       </p>
     </div>
   </div>

@@ -25,6 +25,7 @@ export default {
     };
   },
   computed: {
+    // eslint-disable-next-line vue/no-unused-properties
     ...mapGetters({ globalConfig: 'globalConfig/get' }),
   },
   validations() {
@@ -82,12 +83,7 @@ export default {
       <p
         class="mb-4 text-sm font-normal leading-6 tracking-normal text-n-slate-11"
       >
-        {{
-          useInstallationName(
-            $t('RESET_PASSWORD.DESCRIPTION'),
-            "AlooChat"
-          )
-        }}
+        {{ useInstallationName($t('RESET_PASSWORD.DESCRIPTION'), 'AlooChat') }}
       </p>
       <div class="space-y-5">
         <FormInput

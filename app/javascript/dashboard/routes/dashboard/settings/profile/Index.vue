@@ -277,7 +277,7 @@ export default {
       :description="
         useInstallationName(
           $t('PROFILE_SETTINGS.FORM.ACCESS_TOKEN.NOTE'),
-          "AlooChat"
+          'AlooChat'
         )
       "
     >

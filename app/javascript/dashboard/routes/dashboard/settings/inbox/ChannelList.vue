@@ -69,10 +69,7 @@ export default {
       class="max-w-4xl"
       :header-title="$t('INBOX_MGMT.ADD.AUTH.TITLE')"
       :header-content="
-        useInstallationName(
-          $t('INBOX_MGMT.ADD.AUTH.DESC'),
-          "AlooChat"
-        )
+        useInstallationName($t('INBOX_MGMT.ADD.AUTH.DESC'), 'AlooChat')
       "
     />
     <div

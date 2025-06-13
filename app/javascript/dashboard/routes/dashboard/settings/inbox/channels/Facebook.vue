@@ -67,6 +67,7 @@ export default {
       return this.pageList.filter(item => !item.exists);
     },
     ...mapGetters({
+      // eslint-disable-next-line vue/no-unused-properties
       globalConfig: 'globalConfig/get',
     }),
   },
@@ -223,12 +224,7 @@ export default {
         />
       </a>
       <p class="py-6">
-        {{
-          useInstallationName(
-            $t('INBOX_MGMT.ADD.FB.HELP'),
-            "AlooChat"
-          )
-        }}
+        {{ useInstallationName($t('INBOX_MGMT.ADD.FB.HELP'), 'AlooChat') }}
       </p>
     </div>
     <div v-else>
@@ -249,10 +245,7 @@ export default {
           <PageHeader
             :header-title="$t('INBOX_MGMT.ADD.DETAILS.TITLE')"
             :header-content="
-              useInstallationName(
-                $t('INBOX_MGMT.ADD.DETAILS.DESC'),
-                "AlooChat"
-              )
+              useInstallationName($t('INBOX_MGMT.ADD.DETAILS.DESC'), 'AlooChat')
             "
           />
         </div>

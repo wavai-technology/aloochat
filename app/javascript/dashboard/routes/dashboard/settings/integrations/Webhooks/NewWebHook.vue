@@ -15,6 +15,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      // eslint-disable-next-line vue/no-unused-properties
       globalConfig: 'globalConfig/get',
       uiFlags: 'webhooks/getUIFlags',
     }),
@@ -45,7 +46,7 @@ export default {
       :header-content="
         useInstallationName(
           $t('INTEGRATION_SETTINGS.WEBHOOK.FORM.DESC'),
-          "AlooChat"
+          'AlooChat'
         )
       "
     />
