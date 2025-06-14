@@ -1,10 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useStore } from 'dashboard/composables/store';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import { useVuelidate } from '@vuelidate/core';
-import { required } from '@vuelidate/validators';
+import { required, requiredIf } from '@vuelidate/validators';
 import Button from 'dashboard/components-next/button/Button.vue';
 
 const emit = defineEmits(['close']);
@@ -15,26 +15,46 @@ const { t } = useI18n();
 const selectedAIAgent = ref(null);
 const selectedRegion = ref('');
 const selectedHumanAgent = ref(null);
-const selectedChannel = ref('');
 
 // Data lists
 const aiAgents = ref([]);
 const humanAgents = ref([]);
 const isLoadingAIAgents = ref(false);
 
+const availableRegions = computed(() => {
+  if (
+    selectedAIAgent.value &&
+    selectedAIAgent.value.raw &&
+    selectedAIAgent.value.raw.available_regions
+  ) {
+    return selectedAIAgent.value.raw.available_regions;
+  }
+  return [];
+});
+
+watch(selectedAIAgent, () => {
+  selectedRegion.value = '';
+});
+
 // Validation rules
 const rules = {
   selectedAIAgent: { required },
-  selectedRegion: { required },
-  selectedHumanAgent: { required },
-  selectedChannel: { required },
+  selectedRegion: {
+    required: requiredIf(() => {
+      return availableRegions.value && availableRegions.value.length > 0;
+    }),
+  },
+  selectedHumanAgent: {
+    required: requiredIf(() => {
+      return humanAgents.value && humanAgents.value.length > 0;
+    }),
+  },
 };
 
 const v$ = useVuelidate(rules, {
   selectedAIAgent,
   selectedRegion,
   selectedHumanAgent,
-  selectedChannel,
 });
 
 // Fetch deployed AI agents from backend
@@ -79,7 +99,8 @@ const addBleepAgent = async () => {
       name: selectedAIAgent.value.name,
       is_ai: true,
       ai_agent_id: selectedAIAgent.value.id,
-      human_agent_id: selectedHumanAgent.value.id,
+      agent_key: selectedRegion.value,
+      human_agent_id: selectedHumanAgent.value,
     };
 
     await store.dispatch('agents/createBleepAgent', payload);
@@ -118,28 +139,58 @@ onMounted(() => {
         </span>
       </label>
     </div>
-    <!-- Human Agent Selection -->
-    <div class="w-full">
-      <label :class="{ error: v$.selectedHumanAgent.$error }">
-        {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.HUMAN_AGENT.LABEL') }}
-        <select
-          v-model="selectedHumanAgent"
-          @change="v$.selectedHumanAgent.$touch"
-        >
-          <option value="">
-            {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.HUMAN_AGENT.PLACEHOLDER') }}
+
+    <!-- Region Selection -->
+    <div v-if="selectedAIAgent && availableRegions.length > 0" class="w-full">
+      <label :class="{ error: v$.selectedRegion.$error }">
+        {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.REGION.LABEL') }}
+        <select v-model="selectedRegion" @change="v$.selectedRegion.$touch">
+          <option value="" disabled>
+            {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.REGION.PLACEHOLDER') }}
           </option>
-          <option v-for="agent in humanAgents" :key="agent.id" :value="agent">
-            {{ agent.name }}
+          <option
+            v-for="region in availableRegions"
+            :key="region.key"
+            :value="region.key"
+          >
+            {{ region.name }}
           </option>
         </select>
-        <span v-if="v$.selectedHumanAgent.$error" class="message">
-          {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.HUMAN_AGENT.ERROR') }}
-        </span>
-        <span class="help-text">
-          {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.HUMAN_AGENT.HELP_TEXT') }}
+        <span v-if="v$.selectedRegion.$error" class="message">
+          {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.REGION.ERROR') }}
         </span>
       </label>
+    </div>
+
+    <!-- Human Agent Selection -->
+    <div class="w-full">
+      <label
+        :class="{ error: v$.selectedHumanAgent.$error }"
+        class="block text-sm font-medium text-slate-700 dark:text-slate-200"
+      >
+        {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.HUMAN_AGENT.LABEL') }}
+      </label>
+      <select
+        v-if="humanAgents.length"
+        v-model="selectedHumanAgent"
+        @change="v$.selectedHumanAgent.$touch"
+      >
+        <option value="" disabled>
+          {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.HUMAN_AGENT.PLACEHOLDER') }}
+        </option>
+        <option v-for="agent in humanAgents" :key="agent.id" :value="agent.id">
+          {{ agent.name }}
+        </option>
+      </select>
+      <p v-else class="text-sm text-slate-600 dark:text-slate-300">
+        {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.HUMAN_AGENT.NO_AGENTS') }}
+      </p>
+      <span v-if="v$.selectedHumanAgent.$error" class="message">
+        {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.HUMAN_AGENT.ERROR') }}
+      </span>
+      <span class="help-text">
+        {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.HUMAN_AGENT.HELP_TEXT') }}
+      </span>
     </div>
 
     <!-- Action Buttons -->
@@ -154,7 +205,7 @@ onMounted(() => {
       <Button
         type="submit"
         :label="$t('AGENT_MGMT.ADD.FORM.SUBMIT')"
-        :disabled="v$.$invalid"
+        :disabled="v$.$invalid || humanAgents.length === 0"
       />
     </div>
   </form>

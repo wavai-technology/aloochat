@@ -153,7 +153,8 @@
           "LABEL": "Backup Human Agent",
           "PLACEHOLDER": "Select backup human agent",
           "ERROR": "Backup human agent is required",
-          "HELP_TEXT": "This agent will handle conversations when AI needs assistance"
+          "HELP_TEXT": "This agent will handle conversations when AI needs assistance",
+          "NO_AGENTS": "There are no available human agents to select as a backup. Please create a new human agent first."
         }
       }
     }

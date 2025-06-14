@@ -3,6 +3,7 @@
 # Table name: users
 #
 #  id                     :integer          not null, primary key
+#  agent_key              :string
 #  availability           :integer          default("online")
 #  confirmation_sent_at   :datetime
 #  confirmation_token     :string
@@ -13,6 +14,7 @@
 #  display_name           :string
 #  email                  :string
 #  encrypted_password     :string           default(""), not null
+#  is_ai                  :boolean          default(FALSE), not null
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :string
 #  message_signature      :text
@@ -31,14 +33,20 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  clerk_user_id          :string
+#  human_agent_id         :bigint
 #
 # Indexes
 #
 #  index_users_on_clerk_user_id         (clerk_user_id) UNIQUE WHERE (clerk_user_id IS NOT NULL)
 #  index_users_on_email                 (email)
+#  index_users_on_human_agent_id        (human_agent_id)
 #  index_users_on_pubsub_token          (pubsub_token) UNIQUE
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #  index_users_on_uid_and_provider      (uid,provider) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (human_agent_id => users.id)
 #
 
 class User < ApplicationRecord
@@ -102,10 +110,17 @@ class User < ApplicationRecord
   has_many :macros, foreign_key: 'created_by_id', inverse_of: :created_by
   # rubocop:enable Rails/HasManyOrHasOneDependent
 
+  # Associations for AI Agents
+  belongs_to :human_agent, class_name: 'User', optional: true
+  has_many :ai_agents, class_name: 'User', foreign_key: 'human_agent_id', dependent: :nullify, inverse_of: :human_agent
+
   before_validation :set_password_and_uid, on: :create
   after_destroy :remove_macros
 
   scope :order_by_full_name, -> { order('lower(name) ASC') }
+
+  scope :ai_agents, -> { where(is_ai: true) }
+  scope :human_agents, -> { where(is_ai: false) }
 
   before_validation do
     self.email = email.try(:downcase)
