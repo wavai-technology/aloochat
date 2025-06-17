@@ -54,6 +54,7 @@ Rails.application.routes.draw do
           resource :bulk_actions, only: [:create]
           resources :agents, only: [:index, :create, :update, :destroy] do
             post :bulk_create, on: :collection
+            post :create_ai_agent, on: :collection
           end
           resources :aloostudio_agents, only: [:index]
           namespace :captain do

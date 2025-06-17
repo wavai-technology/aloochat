@@ -69,6 +69,17 @@ export const actions = {
       throw error;
     }
   },
+  createBleepAgent: async ({ commit }, agentData) => {
+    commit(types.default.SET_AGENT_CREATING_STATUS, true);
+    try {
+      const response = await AgentAPI.createAIAgent(agentData);
+      commit(types.default.ADD_AGENT, response.data);
+      commit(types.default.SET_AGENT_CREATING_STATUS, false);
+    } catch (error) {
+      commit(types.default.SET_AGENT_CREATING_STATUS, false);
+      throw error;
+    }
+  },
   update: async ({ commit }, { id, ...agentParams }) => {
     commit(types.default.SET_AGENT_UPDATING_STATUS, true);
     try {

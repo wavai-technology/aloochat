@@ -1,19 +1,20 @@
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useStore } from 'dashboard/composables/store';
 import { useI18n } from 'vue-i18n';
 import { useAlert } from 'dashboard/composables';
 import { useVuelidate } from '@vuelidate/core';
-import { required, requiredIf } from '@vuelidate/validators';
+import { required, requiredIf, helpers } from '@vuelidate/validators';
 import Button from 'dashboard/components-next/button/Button.vue';
 
 const emit = defineEmits(['close']);
 const store = useStore();
 const { t } = useI18n();
 
+const uiFlags = computed(() => store.getters['agents/getUIFlags']);
+
 // Form data
 const selectedAIAgent = ref(null);
-const selectedRegion = ref('');
 const selectedHumanAgent = ref(null);
 
 // Data lists
@@ -21,39 +22,36 @@ const aiAgents = ref([]);
 const humanAgents = ref([]);
 const isLoadingAIAgents = ref(false);
 
-const availableRegions = computed(() => {
-  if (
-    selectedAIAgent.value &&
-    selectedAIAgent.value.raw &&
-    selectedAIAgent.value.raw.available_regions
-  ) {
-    return selectedAIAgent.value.raw.available_regions;
+const hasAgentKey = value => {
+  if (!value) {
+    return true;
   }
-  return [];
-});
+  return !!value.agent_key;
+};
 
-watch(selectedAIAgent, () => {
-  selectedRegion.value = '';
-});
-
-// Validation rules
 const rules = {
-  selectedAIAgent: { required },
-  selectedRegion: {
-    required: requiredIf(() => {
-      return availableRegions.value && availableRegions.value.length > 0;
-    }),
+  selectedAIAgent: {
+    required: helpers.withMessage(
+      t('AGENT_MGMT.BLEEP_AGENT.FORM.AI_AGENT.ERROR'),
+      required
+    ),
+    hasAgentKey: helpers.withMessage(
+      t('AGENT_MGMT.BLEEP_AGENT.FORM.AI_AGENT.NO_REGIONS_ERROR'),
+      hasAgentKey
+    ),
   },
   selectedHumanAgent: {
-    required: requiredIf(() => {
-      return humanAgents.value && humanAgents.value.length > 0;
-    }),
+    required: helpers.withMessage(
+      t('AGENT_MGMT.BLEEP_AGENT.FORM.HUMAN_AGENT.ERROR'),
+      requiredIf(() => {
+        return humanAgents.value && humanAgents.value.length > 0;
+      })
+    ),
   },
 };
 
 const v$ = useVuelidate(rules, {
   selectedAIAgent,
-  selectedRegion,
   selectedHumanAgent,
 });
 
@@ -65,15 +63,19 @@ const fetchAloostudioAgents = async () => {
       'agents/fetchAloostudioDeployments'
     );
 
-    aiAgents.value = deployments.map(d => ({
-      id: d.agent_id || d.id,
-      name: d.agent?.title || 'AI Agent',
-      description: d.agent?.welcome_message || '',
-      capabilities: d.agent?.category_names || [],
-      language: d.agent?.languages || [],
-      response_time: d.agent?.response_time || '',
-      raw: d,
-    }));
+    aiAgents.value = deployments.map(d => {
+      return {
+        id: d.agent_id || d.id,
+        name: d.agent?.title || 'AI Agent',
+        region_id: d.region_id || '',
+        agent_key: d.agent_key || '',
+        description: d.agent?.welcome_message || '',
+        capabilities: d.agent?.category_names || [],
+        language: d.languages || [],
+        response_time: d.agent?.response_time || '',
+        raw: d,
+      };
+    });
   } catch (error) {
     useAlert(t('AGENT_MGMT.ADD.API.BLEEP_FETCH_ERROR'));
   } finally {
@@ -95,11 +97,16 @@ const addBleepAgent = async () => {
   if (v$.value.$invalid) return;
 
   try {
+    const humanAgent = humanAgents.value.find(
+      agent => agent.id === selectedHumanAgent.value
+    );
+
     const payload = {
       name: selectedAIAgent.value.name,
       is_ai: true,
+      email: humanAgent.email,
       ai_agent_id: selectedAIAgent.value.id,
-      agent_key: selectedRegion.value,
+      agent_key: selectedAIAgent.value.agent_key,
       human_agent_id: selectedHumanAgent.value,
     };
 
@@ -107,7 +114,10 @@ const addBleepAgent = async () => {
     useAlert(t('AGENT_MGMT.ADD.API.BLEEP_SUCCESS_MESSAGE'));
     emit('close');
   } catch (error) {
-    useAlert(t('AGENT_MGMT.ADD.API.BLEEP_ERROR_MESSAGE'));
+    const errorMessage =
+      error.response?.data?.message ||
+      t('AGENT_MGMT.ADD.API.BLEEP_ERROR_MESSAGE');
+    useAlert(errorMessage);
   }
 };
 
@@ -134,30 +144,12 @@ onMounted(() => {
             {{ agent.name }}
           </option>
         </select>
-        <span v-if="v$.selectedAIAgent.$error" class="message">
-          {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.AI_AGENT.ERROR') }}
-        </span>
-      </label>
-    </div>
-
-    <!-- Region Selection -->
-    <div v-if="selectedAIAgent && availableRegions.length > 0" class="w-full">
-      <label :class="{ error: v$.selectedRegion.$error }">
-        {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.REGION.LABEL') }}
-        <select v-model="selectedRegion" @change="v$.selectedRegion.$touch">
-          <option value="" disabled>
-            {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.REGION.PLACEHOLDER') }}
-          </option>
-          <option
-            v-for="region in availableRegions"
-            :key="region.key"
-            :value="region.key"
-          >
-            {{ region.name }}
-          </option>
-        </select>
-        <span v-if="v$.selectedRegion.$error" class="message">
-          {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.REGION.ERROR') }}
+        <span
+          v-for="error of v$.selectedAIAgent.$errors"
+          :key="error.$uid"
+          class="message"
+        >
+          {{ error.$message }}
         </span>
       </label>
     </div>
@@ -185,8 +177,12 @@ onMounted(() => {
       <p v-else class="text-sm text-slate-600 dark:text-slate-300">
         {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.HUMAN_AGENT.NO_AGENTS') }}
       </p>
-      <span v-if="v$.selectedHumanAgent.$error" class="message">
-        {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.HUMAN_AGENT.ERROR') }}
+      <span
+        v-for="error of v$.selectedHumanAgent.$errors"
+        :key="error.$uid"
+        class="message"
+      >
+        {{ error.$message }}
       </span>
       <span class="help-text">
         {{ $t('AGENT_MGMT.BLEEP_AGENT.FORM.HUMAN_AGENT.HELP_TEXT') }}
@@ -205,7 +201,10 @@ onMounted(() => {
       <Button
         type="submit"
         :label="$t('AGENT_MGMT.ADD.FORM.SUBMIT')"
-        :disabled="v$.$invalid || humanAgents.length === 0"
+        :disabled="
+          v$.$invalid || humanAgents.length === 0 || uiFlags.isCreating
+        "
+        :is-loading="uiFlags.isCreating"
       />
     </div>
   </form>

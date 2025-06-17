@@ -137,7 +137,8 @@
         "AI_AGENT": {
           "LABEL": "Select AI Agent",
           "PLACEHOLDER": "Choose an AI agent from AlooStudio",
-          "ERROR": "AI agent selection is required"
+          "ERROR": "AI agent selection is required",
+          "NO_REGIONS_ERROR": "The selected AI agent has no available deployment regions and cannot be added."
         },
         "REGION": {
           "LABEL": "Deployment Region",

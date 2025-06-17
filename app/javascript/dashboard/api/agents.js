@@ -13,6 +13,13 @@ class Agents extends ApiClient {
     });
   }
 
+  createAIAgent(agentData) {
+    return this.postCollectionAction({
+      action: 'create_ai_agent',
+      data: { agent: agentData },
+    });
+  }
+
   // Fetch deployed AI agents from backend
   // eslint-disable-next-line class-methods-use-this
   fetchAloostudioDeployments() {
