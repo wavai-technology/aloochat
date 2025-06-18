@@ -86,7 +86,10 @@ const fetchAloostudioAgents = async () => {
 const fetchHumanAgents = async () => {
   try {
     const response = await store.dispatch('agents/get');
-    humanAgents.value = response.filter(agent => !agent.is_ai);
+    humanAgents.value = response.filter(agent => {
+      // Exclude if it's an AI agent OR if the email starts with 'ai-agent-'
+      return !agent.email.startsWith('ai-agent-');
+    });
   } catch (error) {
     useAlert(t('AGENT_MGMT.ADD.API.HUMAN_AGENTS_FETCH_ERROR'));
   }
