@@ -46,8 +46,10 @@ class Api::V1::AccountsController < Api::BaseController
       webhook_response = nil
       begin
         conn = Faraday.new do |f|
+          f.options.timeout = 60
+          f.options.open_timeout = 60
           f.request :json
-          f.response :json, content_type: /json$/
+          f.response :json
           f.adapter Faraday.default_adapter
         end
         response = conn.post(webhook_url, payload) do |req|
@@ -56,8 +58,7 @@ class Api::V1::AccountsController < Api::BaseController
         end
         webhook_response = response.body
         Rails.logger.info("ALOOSTUDIO webhook response: #{webhook_response}")
-        @user.update(clerk_user_id: webhook_response.dig('user', 'user', 'clerkId')) if webhook_response['success'] && webhook_response.dig('user',
-                                                                                                                                            'user', 'clerkId')
+        @user.update(clerk_user_id: webhook_response.dig('clerkId')) if webhook_response['success'] && webhook_response.dig('clerkId')
       rescue StandardError => e
         Rails.logger.error("ALOOSTUDIO webhook call failed: #{e.message}")
       end

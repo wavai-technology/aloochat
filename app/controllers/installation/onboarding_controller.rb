@@ -26,11 +26,13 @@ class Installation::OnboardingController < ApplicationController
         }
         webhook_url = ENV.fetch('ALOOSTUDIO_WEBHOOK_URL', nil)
         api_token = ENV.fetch('ALOOSTUDIO_API_TOKEN', nil)
-        webhook_response = nil
+        # webhook_response = nil
         begin
           conn = Faraday.new do |f|
+            f.options.timeout = 60
+            f.options.open_timeout = 60
             f.request :json
-            f.response :json, content_type: /json$/
+            f.response :json
             f.adapter Faraday.default_adapter
           end
           response = conn.post(webhook_url, payload) do |req|
@@ -38,8 +40,8 @@ class Installation::OnboardingController < ApplicationController
             req.headers['Content-Type'] = 'application/json'
           end
           webhook_response = response.body
-          @user.update(clerk_user_id: webhook_response.dig('user', 'user', 'clerkId')) if webhook_response['success'] && webhook_response.dig('user',
-                                                                                                                                              'user', 'clerkId')
+          Rails.logger.info("ALOOSTUDIO webhook response: #{webhook_response}")
+          @user.update(clerk_user_id: webhook_response.dig('clerkId')) if webhook_response['success'] && webhook_response.dig('clerkId')
         rescue StandardError => e
           Rails.logger.error("ALOOSTUDIO webhook call failed: #{e.message}")
         end
