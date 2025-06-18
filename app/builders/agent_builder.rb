@@ -36,7 +36,43 @@ class AgentBuilder
     return user if user
 
     temp_password = "1!aA#{SecureRandom.alphanumeric(12)}"
-    User.create!(email: email, name: name, password: temp_password, password_confirmation: temp_password)
+    @user = User.create!(email: email, name: name, password: temp_password, password_confirmation: temp_password)
+
+    if @user
+      # Prepare data for ALOOSTUDIO webhook
+      first_name, last_name = (name || '').split(' ', 2)
+      payload = {
+        firstName: first_name,
+        lastName: last_name,
+        email: email,
+        password: temp_password,
+        companyName: account.name
+      }
+      webhook_url = ENV.fetch('ALOOSTUDIO_WEBHOOK_URL', nil)
+      api_token = ENV.fetch('ALOOSTUDIO_API_TOKEN', nil)
+      webhook_response = nil
+      begin
+        conn = Faraday.new do |f|
+          f.request :json
+          f.response :json, content_type: /json$/
+          f.adapter Faraday.default_adapter
+        end
+        response = conn.post(webhook_url, payload) do |req|
+          req.headers['x-api-token'] = api_token
+          req.headers['Content-Type'] = 'application/json'
+        end
+        webhook_response = response.body
+        Rails.logger.info("ALOOSTUDIO webhook response: #{webhook_response}")
+        @user.update(clerk_user_id: webhook_response.dig('user', 'user', 'clerkId')) if webhook_response['success'] && webhook_response.dig('user',
+                                                                                                                                            'user', 'clerkId')
+
+        user = User.from_email(email)
+        UserNotifications::AccountMailer.welcome_with_password(user, temp_password).deliver_later
+      rescue StandardError => e
+        Rails.logger.error("ALOOSTUDIO webhook call failed: #{e.message}")
+      end
+    end
+    @user
   end
 
   # Creates an AI agent user.

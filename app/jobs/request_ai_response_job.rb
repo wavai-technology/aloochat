@@ -5,7 +5,7 @@ class RequestAiResponseJob < ApplicationJob
     Rails.logger.info "RequestAiResponseJob started for message #{message.id}"
     conversation = message.conversation
     ai_agent = conversation.assignee
-    human_agent = conversation.assignee
+    human_agent = ai_agent.human_agent
     clerk_id = human_agent&.clerk_user_id
 
     Rails.logger.info "Conversation: #{conversation.id}, Human Agent: #{human_agent&.id}, Clerk ID: #{clerk_id || 'NOT_FOUND'}"
