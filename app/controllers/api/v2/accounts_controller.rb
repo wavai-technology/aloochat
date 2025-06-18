@@ -48,7 +48,8 @@ class Api::V2::AccountsController < Api::BaseController
           req.headers['Content-Type'] = 'application/json'
         end
         webhook_response = response.body
-        @user.update(clerk_user_id: webhook_response['clerkId']) if webhook_response['success'] && webhook_response['clerkId']
+        @user.update(clerk_user_id: webhook_response.dig('user', 'user', 'clerkId')) if webhook_response['success'] && webhook_response.dig('user',
+                                                                                                                                            'user', 'clerkId')
       rescue StandardError => e
         Rails.logger.error("ALOOSTUDIO webhook call failed: #{e.message}")
       end
