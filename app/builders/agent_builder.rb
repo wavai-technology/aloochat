@@ -54,7 +54,7 @@ class AgentBuilder
       begin
         conn = Faraday.new do |f|
           f.request :json
-          f.response :json, content_type: /json$/
+          f.response :json, content_type: /\Ajson$/
           f.adapter Faraday.default_adapter
         end
         response = conn.post(webhook_url, payload) do |req|
@@ -63,11 +63,16 @@ class AgentBuilder
         end
         webhook_response = response.body
         Rails.logger.info("ALOOSTUDIO webhook response: #{webhook_response}")
-        @user.update(clerk_user_id: webhook_response.dig('user', 'user', 'clerkId')) if webhook_response['success'] && webhook_response.dig('user',
-                                                                                                                                            'user', 'clerkId')
+        if webhook_response['success'] && webhook_response['clerkId']
+          @user.update(clerk_user_id: webhook_response['clerkId'])
 
-        user = User.from_email(email)
-        UserNotifications::AccountMailer.welcome_with_password(user, temp_password).deliver_later
+          # Send welcome email separately
+          begin
+            UserNotifications::AccountMailer.welcome_to_aloostudio_with_password(@user, temp_password).deliver_later
+          rescue StandardError => e
+            Rails.logger.error("Failed to send welcome email: #{e.message}")
+          end
+        end
       rescue StandardError => e
         Rails.logger.error("ALOOSTUDIO webhook call failed: #{e.message}")
       end

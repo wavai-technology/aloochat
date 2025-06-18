@@ -155,7 +155,10 @@ jobs:
             SMTP_OPENSSL_VERIFY_MODE: "${{ secrets.SMTP_OPENSSL_VERIFY_MODE }}"
             MAILER_INBOUND_EMAIL_DOMAIN: "${{ secrets.MAILER_INBOUND_EMAIL_DOMAIN }}"
             RAILS_INBOUND_EMAIL_SERVICE: "${{ secrets.RAILS_INBOUND_EMAIL_SERVICE }}"
-            MAILER_SENDER_EMAIL: "${{ secrets.MAILER_SENDER_EMAIL }}"            
+            MAILER_SENDER_EMAIL: "${{ secrets.MAILER_SENDER_EMAIL }}"   
+            ALOOSTUDIO_BACKEND_URL: "${{ secrets.ALOOSTUDIO_BACKEND_URL }}"
+            ALOOSTUDIO_FRONTEND_URL: "${{ secrets.ALOOSTUDIO_FRONTEND_URL }}"        
+
           EOF
           kubectl create -f secret.yaml
           rm secret.yaml
