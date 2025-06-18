@@ -62,18 +62,13 @@ class AgentBuilder
           req.headers['Content-Type'] = 'application/json'
         end
         webhook_response = response.body
-        Rails.logger.info("ALOOSTUDIO webhook response: #{webhook_response}")
-        if webhook_response['success'] && webhook_response['clerkId']
-          clerk_id_value = webhook_response['clerkId']
-          Rails.logger.info("Saving Clerk ID: #{clerk_id_value} to user #{@user.id}")
-          @user.update(clerk_user_id: clerk_id_value)
-
-          # Send welcome email separately
-          begin
-            UserNotifications::AccountMailer.welcome_to_aloostudio_with_password(@user, temp_password).deliver_later
-          rescue StandardError => e
-            Rails.logger.error("Failed to send welcome email: #{e.message}")
-          end
+        @user.update(clerk_user_id: webhook_response.dig('user', 'user', 'clerkId')) if webhook_response['success'] && webhook_response.dig('user',
+          'user', 'clerkId')
+        # Send welcome email separately
+        begin
+          UserNotifications::AccountMailer.welcome_to_aloostudio_with_password(@user, temp_password).deliver_later
+        rescue StandardError => e
+          Rails.logger.error("Failed to send welcome email: #{e.message}")
         end
       rescue StandardError => e
         Rails.logger.error("ALOOSTUDIO webhook call failed: #{e.message}")
