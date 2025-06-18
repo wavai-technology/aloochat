@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_06_12_094351) do
+ActiveRecord::Schema[7.0].define(version: 2025_06_14_001615) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -1069,8 +1069,12 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_12_094351) do
     t.string "type"
     t.text "message_signature"
     t.string "clerk_user_id"
+    t.boolean "is_ai", default: false, null: false
+    t.string "agent_key"
+    t.bigint "human_agent_id"
     t.index ["clerk_user_id"], name: "index_users_on_clerk_user_id", unique: true, where: "(clerk_user_id IS NOT NULL)"
     t.index ["email"], name: "index_users_on_email"
+    t.index ["human_agent_id"], name: "index_users_on_human_agent_id"
     t.index ["pubsub_token"], name: "index_users_on_pubsub_token", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
@@ -1106,6 +1110,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_12_094351) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "inboxes", "portals"
+  add_foreign_key "users", "users", column: "human_agent_id"
   create_trigger("accounts_after_insert_row_tr", :generated => true, :compatibility => 1).
       on("accounts").
       after(:insert).

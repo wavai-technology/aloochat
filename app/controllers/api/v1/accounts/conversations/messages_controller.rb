@@ -9,6 +9,8 @@ class Api::V1::Accounts::Conversations::MessagesController < Api::V1::Accounts::
     user = Current.user || @resource
     mb = Messages::MessageBuilder.new(user, @conversation, params)
     @message = mb.perform
+
+    RequestAiResponseJob.perform_later(@message) if @message.persisted? && @conversation.assignee&.is_ai? && @message.incoming?
   rescue StandardError => e
     render_could_not_create_error(e.message)
   end

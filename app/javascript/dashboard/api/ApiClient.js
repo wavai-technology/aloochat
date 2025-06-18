@@ -58,6 +58,10 @@ class ApiClient {
   delete(id) {
     return axios.delete(`${this.url}/${id}`);
   }
+
+  postCollectionAction({ action, data }) {
+    return axios.post(`${this.url}/${action}`, data);
+  }
 }
 
 export default ApiClient;

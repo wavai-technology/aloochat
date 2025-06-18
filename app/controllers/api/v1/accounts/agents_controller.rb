@@ -1,7 +1,7 @@
 class Api::V1::Accounts::AgentsController < Api::V1::Accounts::BaseController
-  before_action :fetch_agent, except: [:create, :index, :bulk_create]
+  before_action :fetch_agent, except: [:create, :index, :bulk_create, :create_ai_agent]
   before_action :check_authorization
-  before_action :validate_limit, only: [:create]
+  before_action :validate_limit, only: [:create, :create_ai_agent]
   before_action :validate_limit_for_bulk_create, only: [:bulk_create]
 
   def index
@@ -19,6 +19,20 @@ class Api::V1::Accounts::AgentsController < Api::V1::Accounts::BaseController
       account: Current.account
     )
 
+    @agent = builder.perform
+  end
+
+  def create_ai_agent
+    Rails.logger.info "[Agent#create_ai_agent]: #{ai_agent_params.inspect}"
+    builder = AgentBuilder.new(
+      name: ai_agent_params[:name],
+      is_ai: ai_agent_params[:is_ai],
+      ai_agent_id: ai_agent_params[:ai_agent_id],
+      agent_key: ai_agent_params[:agent_key],
+      human_agent_id: ai_agent_params[:human_agent_id],
+      inviter: current_user,
+      account: Current.account
+    )
     @agent = builder.perform
   end
 
@@ -81,6 +95,10 @@ class Api::V1::Accounts::AgentsController < Api::V1::Accounts::BaseController
 
   def new_agent_params
     params.require(:agent).permit(:email, :name, :role, :availability, :auto_offline)
+  end
+
+  def ai_agent_params
+    params.require(:agent).permit(:name, :is_ai, :ai_agent_id, :agent_key, :human_agent_id)
   end
 
   def agents

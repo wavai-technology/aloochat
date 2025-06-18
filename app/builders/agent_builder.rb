@@ -3,19 +3,25 @@
 # to create a user and account user in a transaction.
 class AgentBuilder
   # Initializes an AgentBuilder with necessary attributes.
-  # @param email [String] the email of the user.
-  # @param name [String] the name of the user.
-  # @param role [String] the role of the user, defaults to 'agent' if not provided.
-  # @param inviter [User] the user who is inviting the agent (Current.user in most cases).
-  # @param availability [String] the availability status of the user, defaults to 'offline' if not provided.
-  # @param auto_offline [Boolean] the auto offline status of the user.
-  pattr_initialize [:email, { name: '' }, :inviter, :account, { role: :agent }, { availability: :offline }, { auto_offline: false }]
+  pattr_initialize [
+    { email: nil },
+    { name: '' },
+    :inviter,
+    :account,
+    { role: :agent },
+    { availability: :offline },
+    { auto_offline: false },
+    { is_ai: false },
+    :ai_agent_id,
+    :agent_key,
+    :human_agent_id
+  ]
 
   # Creates a user and account user in a transaction.
   # @return [User] the created user.
   def perform
     ActiveRecord::Base.transaction do
-      @user = find_or_create_user
+      @user = is_ai ? create_ai_agent : create_human_agent
       create_account_user
     end
     @user
@@ -23,19 +29,87 @@ class AgentBuilder
 
   private
 
-  # Finds a user by email or creates a new one with a temporary password.
+  # Creates a human agent user.
   # @return [User] the found or created user.
-  def find_or_create_user
+  def create_human_agent
     user = User.from_email(email)
     return user if user
 
     temp_password = "1!aA#{SecureRandom.alphanumeric(12)}"
-    User.create!(email: email, name: name, password: temp_password, password_confirmation: temp_password)
+    @user = User.create!(email: email, name: name, password: temp_password, password_confirmation: temp_password)
+
+    if @user
+      # Prepare data for ALOOSTUDIO webhook
+      first_name, last_name = (name || '').split(' ', 2)
+      payload = {
+        firstName: first_name,
+        lastName: last_name,
+        email: email,
+        password: temp_password,
+        companyName: account.name
+      }
+      webhook_url = ENV.fetch('ALOOSTUDIO_WEBHOOK_URL', nil)
+      api_token = ENV.fetch('ALOOSTUDIO_API_TOKEN', nil)
+      webhook_response = nil
+      begin
+        conn = Faraday.new do |f|
+          f.request :json
+          f.response :json, content_type: /\Ajson$/
+          f.adapter Faraday.default_adapter
+        end
+        response = conn.post(webhook_url, payload) do |req|
+          req.headers['x-api-token'] = api_token
+          req.headers['Content-Type'] = 'application/json'
+        end
+        webhook_response = response.body
+        Rails.logger.info("ALOOSTUDIO webhook response: #{webhook_response}")
+        if webhook_response['success'] && webhook_response['clerkId']
+          @user.update(clerk_user_id: webhook_response['clerkId'])
+
+          # Send welcome email separately
+          begin
+            UserNotifications::AccountMailer.welcome_to_aloostudio_with_password(@user, temp_password).deliver_later
+          rescue StandardError => e
+            Rails.logger.error("Failed to send welcome email: #{e.message}")
+          end
+        end
+      rescue StandardError => e
+        Rails.logger.error("ALOOSTUDIO webhook call failed: #{e.message}")
+      end
+    end
+    @user
+  end
+
+  # Creates an AI agent user.
+  # @return [User] the created AI user.
+  def create_ai_agent
+    # Generate a unique, non-routable email for the AI agent
+    domain = account.domain.presence || 'a.bleep.ai'
+    ai_email = "ai-agent-#{ai_agent_id}@#{domain}"
+    Rails.logger.info "[AgentBuilder#create_ai_agent] Attempting to create AI agent with email: #{ai_email}"
+
+    temp_password = "1!aA#{SecureRandom.alphanumeric(12)}"
+    user = User.new(
+      email: ai_email,
+      name: name,
+      password: temp_password,
+      password_confirmation: temp_password,
+      is_ai: true,
+      agent_key: agent_key,
+      human_agent_id: human_agent_id
+    )
+    # AI agents don't need to confirm their email
+    user.skip_confirmation!
+    user.save!
+    user
   end
 
   # Checks if the user needs confirmation.
   # @return [Boolean] true if the user is persisted and not confirmed, false otherwise.
   def user_needs_confirmation?
+    # AI agents are confirmed automatically
+    return false if is_ai
+
     @user.persisted? && !@user.confirmed?
   end
 
@@ -44,7 +118,7 @@ class AgentBuilder
     AccountUser.create!({
       account_id: account.id,
       user_id: @user.id,
-      inviter_id: inviter.id
+      inviter_id: inviter&.id
     }.merge({
       role: role,
       availability: availability,

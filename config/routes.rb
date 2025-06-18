@@ -54,7 +54,9 @@ Rails.application.routes.draw do
           resource :bulk_actions, only: [:create]
           resources :agents, only: [:index, :create, :update, :destroy] do
             post :bulk_create, on: :collection
+            post :create_ai_agent, on: :collection
           end
+          resources :aloostudio_agents, only: [:index]
           namespace :captain do
             resources :assistants do
               member do
@@ -72,6 +74,7 @@ Rails.application.routes.draw do
           resources :agent_bots, only: [:index, :create, :show, :update, :destroy] do
             delete :avatar, on: :member
           end
+
           resources :contact_inboxes, only: [] do
             collection do
               post :filter
@@ -336,6 +339,8 @@ Rails.application.routes.draw do
           end
         end
       end
+
+      resources :aloostudio_agents, only: [:index]
     end
 
     namespace :v2 do

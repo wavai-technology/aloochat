@@ -203,6 +203,9 @@ export default {
       return this.$store.getters['inboxes/getInbox'](this.inboxId);
     },
     messagePlaceHolder() {
+      if (this.assignedAgent && this.assignedAgent.is_ai) {
+        return this.$t('CONVERSATION.FOOTER.AI_MSG_INPUT');
+      }
       return this.isPrivate
         ? this.$t('CONVERSATION.FOOTER.PRIVATE_MSG_INPUT')
         : this.$t('CONVERSATION.FOOTER.MSG_INPUT');

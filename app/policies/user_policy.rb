@@ -7,6 +7,10 @@ class UserPolicy < ApplicationPolicy
     @account_user.administrator?
   end
 
+  def create_ai_agent?
+    @account_user.administrator?
+  end
+
   def update?
     @account_user.administrator?
   end

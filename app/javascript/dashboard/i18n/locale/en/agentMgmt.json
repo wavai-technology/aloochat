@@ -132,12 +132,13 @@
     },
     "BLEEP_AGENT": {
       "TITLE": "Add AI Agent",
-      "DESC": "Configure an AI agent from the Bleep platform",
+      "DESC": "Configure an AI agent from the AlooStudio platform",
       "FORM": {
         "AI_AGENT": {
           "LABEL": "Select AI Agent",
-          "PLACEHOLDER": "Choose an AI agent from Bleep",
-          "ERROR": "AI agent selection is required"
+          "PLACEHOLDER": "Choose an AI agent from AlooStudio",
+          "ERROR": "AI agent selection is required",
+          "NO_REGIONS_ERROR": "The selected AI agent has no available deployment regions and cannot be added."
         },
         "REGION": {
           "LABEL": "Deployment Region",
@@ -153,7 +154,8 @@
           "LABEL": "Backup Human Agent",
           "PLACEHOLDER": "Select backup human agent",
           "ERROR": "Backup human agent is required",
-          "HELP_TEXT": "This agent will handle conversations when AI needs assistance"
+          "HELP_TEXT": "This agent will handle conversations when AI needs assistance",
+          "NO_AGENTS": "There are no available human agents to select as a backup. Please create a new human agent first."
         }
       }
     }
