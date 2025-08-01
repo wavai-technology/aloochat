@@ -15,6 +15,13 @@ spec:
     - host: cx.aloochat.ai
       http:
         paths:
+          - path: /vite
+            pathType: Prefix
+            backend:
+              service:
+                name: chatwoot-vite
+                port:
+                  number: 3036
           - path: /
             pathType: Prefix
             backend:
