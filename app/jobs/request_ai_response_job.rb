@@ -20,11 +20,11 @@ class RequestAiResponseJob < ApplicationJob
     human_agent = ai_agent.human_agent
     clerk_id = human_agent&.clerk_user_id
 
-    Rails.logger.info "AI Agent: #{ai_agent.id}, Human Agent: #{human_agent&.id}, Clerk ID: #{clerk_id || 'NOT_FOUND'}"
+    Rails.logger.info "AI Agent: #{ai_agent.id}, Human Agent: #{human_agent&.id}, Clerk ID: #{clerk_id || 'NOT_FOUND'}, Agent Key: #{ai_agent.agent_key}"
     Rails.logger.info "Deployment URL: #{deployment_url}, API Token Present: #{api_token != 'TOKEN_NOT_SET'}"
 
-    unless deployment_url.present? && api_token.present? && clerk_id.present?
-      error_message = "AI agent configuration is missing. URL, token, or clerk_id not found for AI agent #{ai_agent.id}"
+    unless deployment_url.present? && api_token.present? && clerk_id.present? && ai_agent.agent_key.present?
+      error_message = "AI agent configuration is missing. URL, token, clerk_id, or agent_key not found for AI agent #{ai_agent.id}"
       Rails.logger.error error_message
       return
     end
@@ -37,24 +37,31 @@ class RequestAiResponseJob < ApplicationJob
       }
     end
 
-    ai_payload = {
+    # Prepare form data payload (FastAPI expects Form data, not JSON)
+    form_data = {
       agent_key: ai_agent.agent_key,
-      messages: messages_for_payload,
+      messages: messages_for_payload.to_json, # Convert messages array to JSON string
       query: message.content
       # conversation_id: conversation.id.to_s
-    }.to_json
+    }
 
+    # Log the payload before sending
+    Rails.logger.info "Form Data Payload: #{form_data.inspect}"
+    Rails.logger.info "Agent Key Present: #{ai_agent.agent_key.present?}"
+    Rails.logger.info "Messages Count: #{messages_for_payload.length}"
+    Rails.logger.info "Messages JSON: #{messages_for_payload.to_json}"
+    
     headers = {
-      'Content-Type' => 'application/json',
       'x-api-token' => api_token,
       'clerk-id' => clerk_id
+      # Note: Removed Content-Type header - RestClient will set it automatically for form data
     }
 
     begin
       Rails.logger.info "Sending AI request for conversation #{conversation.id} to #{deployment_url}"
       response = RestClient.post(
         deployment_url,
-        ai_payload,
+        form_data, # Send as form data, not JSON
         headers
       )
 
