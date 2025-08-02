@@ -15,7 +15,7 @@ class RequestAiResponseJob < ApplicationJob
       return
     end
 
-    deployment_url = "#{ENV.fetch('ALOOSTUDIO_BACKEND_URL', 'URL_NOT_SET')}/chat"
+    deployment_url = "#{ENV.fetch('ALOOSTUDIO_BACKEND_URL', 'URL_NOT_SET')}/chat/agent/chat"
     api_token = ENV.fetch('ALOOSTUDIO_API_TOKEN', 'TOKEN_NOT_SET')
     human_agent = ai_agent.human_agent
     clerk_id = human_agent&.clerk_user_id
