@@ -111,7 +111,7 @@ jobs:
       
       - name: Update Kubernetes ConfigMap
         run: |
-          kubectl apply -f k8s/configmap.yaml
+          kubectl apply -f k8s/production/configmap.yaml
       
       - name: Create Kubernetes Secrets
         run: |
@@ -172,10 +172,10 @@ jobs:
 
           # Apply deployments & services
           echo "Applying deployments and services in namespace default..."
-          kubectl apply -n default -f k8s/rails-deployment.yaml
-          kubectl apply -n default -f k8s/vite-deployment.yaml
-          kubectl apply -n default -f k8s/sidekiq-deployment.yaml
-          kubectl apply -n default -f k8s/mailhog-deployment.yaml
+          kubectl apply -n default -f k8s/production/rails-deployment.yaml
+          kubectl apply -n default -f k8s/production/vite-deployment.yaml
+          kubectl apply -n default -f k8s/production/sidekiq-deployment.yaml
+          kubectl apply -n default -f k8s/production/mailhog-deployment.yaml
 
 
           # Wait for all deployments to be ready
