@@ -111,11 +111,11 @@ jobs:
       
       - name: Update Kubernetes ConfigMap
         run: |
-          kubectl apply -f k8s/production/configmap.yaml
+          kubectl apply -f k8s/production/configmap.yaml -n default
       
       - name: Create Kubernetes Secrets
         run: |
-          kubectl delete secret chatwoot-secrets --ignore-not-found=true
+          kubectl delete secret chatwoot-secrets --ignore-not-found=true -n default
           cat > k8s/production/secret.yaml << EOF
           apiVersion: v1
           kind: Secret
@@ -162,13 +162,18 @@ jobs:
             SMTP_READ_TIMEOUT: "60"
 
           EOF
-          kubectl create -f k8s/production/secret.yaml
+          kubectl create -f k8s/production/secret.yaml -n default
           rm k8s/production/secret.yaml
+
+          echo "Secret created in namespace default..."
+          echo "${{ secrets.PRODUCTION_POSTGRES_HOST }}"
+          echo "${{ secrets.PRODUCTION_POSTGRES_PORT }}"
+          echo "${{ secrets.PRODUCTION_POSTGRES_DATABASE }}"
+          echo "${{ secrets.PRODUCTION_POSTGRES_USERNAME }}"
+          echo "${{ secrets.PRODUCTION_POSTGRES_PASSWORD }}"
       
       - name: Deploy AlooChat to Kubernetes in ingress-nginx namespace
         run: |
-          # Set namespace
-          NAMESPACE=ingress-nginx
 
           # Apply deployments & services
           echo "Applying deployments and services in namespace default..."

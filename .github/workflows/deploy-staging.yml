@@ -163,6 +163,13 @@ jobs:
           kubectl create -f k8s/staging/secret-staging.yaml
           rm k8s/staging/secret-staging.yaml
 
+          echo "Secret created in namespace chatwoot-staging..."
+          echo "${{ secrets.POSTGRES_HOST }}"
+          echo "${{ secrets.POSTGRES_PORT }}"
+          echo "${{ secrets.POSTGRES_DATABASE }}"
+          echo "${{ secrets.POSTGRES_USERNAME }}"
+          echo "${{ secrets.POSTGRES_PASSWORD }}"
+
       - name: Deploy AlooChat to Kubernetes (staging)
         run: |
           # Apply staging deployments & services to chatwoot-staging namespace
