@@ -111,6 +111,7 @@ jobs:
       
       - name: Create Kubernetes ConfigMap
         run: |
+          kubectl delete configmap chatwoot-config --ignore-not-found=true -n default
           cat > k8s/production/configmap.yaml << EOF
           apiVersion: v1
           kind: ConfigMap

@@ -108,6 +108,7 @@ jobs:
           # Ensure namespace exists
           kubectl apply -f k8s/staging/namespace.yaml
           
+          kubectl delete configmap chatwoot-config-staging --ignore-not-found=true -n chatwoot-staging
           cat > k8s/staging/configmap.yaml << EOF
           apiVersion: v1
           kind: ConfigMap
