@@ -109,9 +109,55 @@ jobs:
           sleep 60
           doctl kubernetes cluster kubeconfig save chatwoot-cluster
       
-      - name: Update Kubernetes ConfigMap
+      - name: Create Kubernetes ConfigMap
         run: |
-          kubectl apply -f k8s/production/configmap.yaml -n default
+          cat > k8s/production/configmap.yaml << EOF
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: chatwoot-config
+            namespace: default
+          data:
+            DATABASE_URL: "postgresql://${{ secrets.PRODUCTION_POSTGRES_USERNAME }}:${{ secrets.PRODUCTION_POSTGRES_PASSWORD }}@${{ secrets.PRODUCTION_POSTGRES_HOST }}:${{ secrets.PRODUCTION_POSTGRES_PORT }}/${{ secrets.PRODUCTION_POSTGRES_DATABASE }}?sslmode=require"
+            POSTGRES_HOST: "${{ secrets.PRODUCTION_POSTGRES_HOST }}"
+            POSTGRES_PORT: "${{ secrets.PRODUCTION_POSTGRES_PORT }}"
+            POSTGRES_DATABASE: "${{ secrets.PRODUCTION_POSTGRES_DATABASE }}"
+            POSTGRES_USERNAME: "${{ secrets.PRODUCTION_POSTGRES_USERNAME }}"
+            POSTGRES_PASSWORD: "${{ secrets.PRODUCTION_POSTGRES_PASSWORD }}"
+            REDIS_URL: "${{ secrets.PRODUCTION_REDIS_URL }}"
+            REDIS_PASSWORD: "${{ secrets.PRODUCTION_REDIS_PASSWORD }}"
+            REDIS_HOST: "${{ secrets.PRODUCTION_REDIS_HOST }}"
+            REDIS_PORT: "${{ secrets.PRODUCTION_REDIS_PORT }}"
+            SECRET_KEY_BASE: "${{ secrets.SECRET_KEY_BASE }}"
+            DOMAIN: "${{ secrets.DOMAIN || 'cx.aloochat.ai' }}"
+            ACTIVE_STORAGE_SERVICE: "${{ secrets.ACTIVE_STORAGE_SERVICE }}"
+            S3_BUCKET_NAME: "${{ secrets.S3_BUCKET_NAME }}"
+            AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+            AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+            AWS_REGION: "${{ secrets.AWS_REGION }}"
+            OPENAI_API_KEY: "${{ secrets.OPENAI_API_KEY }}"
+            FORCE_SSL: "${{ secrets.FORCE_SSL }}"
+            CLERK_WEBHOOK_SECRET: "${{ secrets.PRODUCTION_CLERK_WEBHOOK_SECRET }}"
+            ALOOSTUDIO_API_TOKEN: "${{ secrets.ALOOSTUDIO_API_TOKEN }}"
+            ALOOSTUDIO_WEBHOOK_URL: "${{ secrets.PRODUCTION_ALOOSTUDIO_WEBHOOK_URL }}"
+            SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
+            SMTP_USERNAME: "${{ secrets.SMTP_USERNAME }}"
+            SMTP_ADDRESS: "${{ secrets.SMTP_ADDRESS }}"
+            SMTP_PORT: "${{ secrets.SMTP_PORT }}"
+            SMTP_DOMAIN: "${{ secrets.SMTP_DOMAIN }}"
+            SMTP_AUTHENTICATION: "${{ secrets.SMTP_AUTHENTICATION }}"
+            SMTP_ENABLE_STARTTLS_AUTO: "${{ secrets.SMTP_ENABLE_STARTTLS_AUTO }}"
+            SMTP_OPENSSL_VERIFY_MODE: "${{ secrets.SMTP_OPENSSL_VERIFY_MODE }}"
+            MAILER_INBOUND_EMAIL_DOMAIN: "${{ secrets.MAILER_INBOUND_EMAIL_DOMAIN }}"
+            RAILS_INBOUND_EMAIL_SERVICE: "${{ secrets.RAILS_INBOUND_EMAIL_SERVICE }}"
+            MAILER_SENDER_EMAIL: "${{ secrets.MAILER_SENDER_EMAIL }}"   
+            ALOOSTUDIO_BACKEND_URL: "${{ secrets.PRODUCTION_ALOOSTUDIO_BACKEND_URL }}"
+            ALOOSTUDIO_FRONTEND_URL: "${{ secrets.PRODUCTION_ALOOSTUDIO_FRONTEND_URL }}"      
+            SMTP_OPEN_TIMEOUT: "60"
+            SMTP_READ_TIMEOUT: "60"
+
+          EOF
+          kubectl apply -f configmap.yaml
       
       - name: Create Kubernetes Secrets
         run: |
@@ -162,16 +208,9 @@ jobs:
             SMTP_READ_TIMEOUT: "60"
 
           EOF
-          kubectl create -f k8s/production/secret.yaml -n default
+          kubectl apply -f k8s/production/secret.yaml -n default
           rm k8s/production/secret.yaml
 
-          echo "Secret created in namespace default..."
-          echo "${{ secrets.PRODUCTION_POSTGRES_HOST }}"
-          echo "${{ secrets.PRODUCTION_POSTGRES_PORT }}"
-          echo "${{ secrets.PRODUCTION_POSTGRES_DATABASE }}"
-          echo "${{ secrets.PRODUCTION_POSTGRES_USERNAME }}"
-          echo "${{ secrets.PRODUCTION_POSTGRES_PASSWORD }}"
-      
       - name: Deploy AlooChat to Kubernetes in ingress-nginx namespace
         run: |
 
