@@ -154,6 +154,7 @@ jobs:
             SMTP_READ_TIMEOUT: "60"
           EOF
           kubectl create -f k8s/staging/configmap.yaml -n chatwoot-staging
+          
 
       - name: Create Kubernetes Secrets (staging)
         run: |

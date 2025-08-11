@@ -157,7 +157,7 @@ jobs:
             SMTP_READ_TIMEOUT: "60"
 
           EOF
-          kubectl apply -f configmap.yaml
+          kubectl apply -f k8s/production/configmap.yaml
       
       - name: Create Kubernetes Secrets
         run: |
