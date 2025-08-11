@@ -171,7 +171,6 @@ jobs:
           kubectl apply -n chatwoot-staging -f k8s/staging/sidekiq-deployment.yaml
           kubectl apply -n chatwoot-staging -f k8s/staging/mailhog-deployment.yaml
           kubectl apply -n chatwoot-staging -f k8s/staging/ingress.yaml
-          kubectl apply -n chatwoot-staging -f k8s/staging/loadbalancer.yaml
 
           # Wait for all deployments to be ready
           echo "Waiting for Rails deployment (staging)..."
