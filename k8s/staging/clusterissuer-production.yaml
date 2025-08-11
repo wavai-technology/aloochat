@@ -5,8 +5,7 @@ metadata:
 spec:
   acme:
     email: faisal@aloochat.ai
-    # Use Let's Encrypt STAGING to avoid rate-limits during setup. Switch to prod once validated.
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-staging
     solvers:
