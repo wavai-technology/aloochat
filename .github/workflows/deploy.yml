@@ -116,7 +116,7 @@ jobs:
       - name: Create Kubernetes Secrets
         run: |
           kubectl delete secret chatwoot-secrets --ignore-not-found=true
-          cat > secret.yaml << EOF
+          cat > k8s/production/secret.yaml << EOF
           apiVersion: v1
           kind: Secret
           metadata:
@@ -162,8 +162,8 @@ jobs:
             SMTP_READ_TIMEOUT: "60"
 
           EOF
-          kubectl create -f secret.yaml
-          rm secret.yaml
+          kubectl create -f k8s/production/secret.yaml
+          rm k8s/production/secret.yaml
       
       - name: Deploy AlooChat to Kubernetes in ingress-nginx namespace
         run: |

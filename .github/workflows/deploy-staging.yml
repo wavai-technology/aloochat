@@ -114,7 +114,7 @@ jobs:
         run: |
           # Create/replace secret in staging namespace
           kubectl delete secret chatwoot-secrets-staging -n chatwoot-staging --ignore-not-found=true
-          cat > secret-staging.yaml << EOF
+          cat > k8s/staging/secret-staging.yaml << EOF
           apiVersion: v1
           kind: Secret
           metadata:
@@ -160,8 +160,8 @@ jobs:
             SMTP_OPEN_TIMEOUT: "60"
             SMTP_READ_TIMEOUT: "60"
           EOF
-          kubectl create -f secret-staging.yaml
-          rm secret-staging.yaml
+          kubectl create -f k8s/staging/secret-staging.yaml
+          rm k8s/staging/secret-staging.yaml
 
       - name: Deploy AlooChat to Kubernetes (staging)
         run: |
