@@ -156,7 +156,6 @@ jobs:
             ALOOSTUDIO_FRONTEND_URL: "${{ secrets.PRODUCTION_ALOOSTUDIO_FRONTEND_URL }}"      
             SMTP_OPEN_TIMEOUT: "60"
             SMTP_READ_TIMEOUT: "60"
-            REDIS_OPENSSL_VERIFY_MODE: "none"
           EOF
           kubectl apply -f k8s/production/configmap.yaml
       
@@ -207,7 +206,6 @@ jobs:
             ALOOSTUDIO_FRONTEND_URL: "${{ secrets.PRODUCTION_ALOOSTUDIO_FRONTEND_URL }}"      
             SMTP_OPEN_TIMEOUT: "60"
             SMTP_READ_TIMEOUT: "60"
-            REDIS_OPENSSL_VERIFY_MODE: "none"
           EOF
           kubectl apply -f k8s/production/secret.yaml -n default
           rm k8s/production/secret.yaml
@@ -217,7 +215,7 @@ jobs:
 
           # Apply deployments & services
           echo "Applying deployments and services in namespace default..."
-          # kubectl apply -n default -f k8s/production/redis-deployment.yaml
+          kubectl apply -n default -f k8s/production/redis-deployment.yaml
           kubectl apply -n default -f k8s/production/rails-deployment.yaml
           kubectl apply -n default -f k8s/production/vite-deployment.yaml
           kubectl apply -n default -f k8s/production/sidekiq-deployment.yaml
@@ -226,7 +224,7 @@ jobs:
 
           # Wait for all deployments to be ready
           # echo "Waiting for Redis deployment..."
-          # kubectl rollout status deployment/redis -n default --timeout=300s
+          kubectl rollout status deployment/redis -n default --timeout=300s
           
           echo "Waiting for Rails deployment..."
           kubectl rollout status deployment/chatwoot-rails -n default --timeout=300s
