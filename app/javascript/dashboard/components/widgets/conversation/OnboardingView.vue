@@ -6,7 +6,7 @@ import { useStoreGetters } from 'dashboard/composables/store';
 
 const getters = useStoreGetters();
 const { t } = useI18n();
-const globalConfig = computed(() => getters['globalConfig/get'].value);
+// const globalConfig = computed(() => getters['globalConfig/get'].value);
 const currentUser = computed(() => getters.getCurrentUser.value);
 
 const greetingMessage = computed(() => {
