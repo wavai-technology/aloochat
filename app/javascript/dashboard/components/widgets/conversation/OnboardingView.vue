@@ -21,7 +21,7 @@ const greetingMessage = computed(() => {
   }
   return t(translationKey, {
     name: currentUser.value.name,
-    installationName: globalConfig.value.installationName,
+    installationName: 'AlooChat',
   });
 });
 </script>
@@ -39,7 +39,7 @@ const greetingMessage = computed(() => {
       <p class="text-slate-600 dark:text-slate-400 max-w-2xl text-base">
         {{
           $t('ONBOARDING.DESCRIPTION', {
-            installationName: globalConfig.installationName,
+            installationName: 'AlooChat',
           })
         }}
       </p>
