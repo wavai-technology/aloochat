@@ -106,6 +106,9 @@ class Messages::Instagram::BaseMessageBuilder < Messages::Messenger::MessageBuil
     attachments.each do |attachment|
       process_attachment(attachment)
     end
+
+    # Trigger AI response if conditions are met
+    Messages::AiResponseTriggerService.new(message: @message).perform
   end
 
   def save_story_id

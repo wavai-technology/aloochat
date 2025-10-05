@@ -68,6 +68,9 @@ class Whatsapp::IncomingMessageBaseService
       create_message(contact)
       attach_contact(contact)
       @message.save!
+
+      # Trigger AI response if conditions are met
+      Messages::AiResponseTriggerService.new(message: @message).perform
     end
   end
 
@@ -76,6 +79,9 @@ class Whatsapp::IncomingMessageBaseService
     attach_files
     attach_location if message_type == 'location'
     @message.save!
+
+    # Trigger AI response if conditions are met
+    Messages::AiResponseTriggerService.new(message: @message).perform
   end
 
   def set_contact
