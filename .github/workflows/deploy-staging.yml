@@ -154,6 +154,11 @@ jobs:
             FRONTEND_URL: "https://staging.cx.aloochat.ai"
             SMTP_OPEN_TIMEOUT: "60"
             SMTP_READ_TIMEOUT: "60"
+            FB_VERIFY_TOKEN: "${{ secrets.FB_VERIFY_TOKEN }}"
+            FB_APP_SECRET: "${{ secrets.FB_APP_SECRET }}"
+            FB_APP_ID: "${{ secrets.FB_APP_ID }}"
+            IG_VERIFY_TOKEN: "${{ secrets.IG_VERIFY_TOKEN }}"
+            INSTAGRAM_APP_ID: "${{ secrets.INSTAGRAM_APP_ID }}"
           EOF
           kubectl apply -f k8s/staging/configmap.yaml
           
@@ -208,6 +213,11 @@ jobs:
             FRONTEND_URL: "https://staging.cx.aloochat.ai"
             SMTP_OPEN_TIMEOUT: "60"
             SMTP_READ_TIMEOUT: "60"
+            FB_VERIFY_TOKEN: "${{ secrets.FB_VERIFY_TOKEN }}"
+            FB_APP_SECRET: "${{ secrets.FB_APP_SECRET }}"
+            FB_APP_ID: "${{ secrets.FB_APP_ID }}"
+            IG_VERIFY_TOKEN: "${{ secrets.IG_VERIFY_TOKEN }}"
+            INSTAGRAM_APP_ID: "${{ secrets.INSTAGRAM_APP_ID }}"
           EOF
           kubectl create -f k8s/staging/secret.yaml -n chatwoot-staging
           rm k8s/staging/secret.yaml
