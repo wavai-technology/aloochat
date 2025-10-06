@@ -40,6 +40,7 @@ const containerClasses = computed(() => [
       <HeaderActions
         :show-popout-button="showPopoutButton"
         :show-end-conversation-button="false"
+        show-call-button
       />
     </div>
     <h2

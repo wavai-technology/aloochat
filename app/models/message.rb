@@ -312,6 +312,15 @@ class Message < ApplicationRecord
   end
 
   def send_reply
+    Rails.logger.info "[MESSAGE] 🔍 send_reply called for message #{id}, sender: #{sender.class.name} #{sender.id}, sender.is_ai: #{sender.is_a?(User) ? sender.is_ai? : 'N/A'}"
+
+    # Skip sending reply for AI-generated messages since they're handled by RequestAiResponseJob
+    if sender.is_a?(User) && sender.is_ai?
+      Rails.logger.info "[MESSAGE] ✅ Skipping send_reply for AI-generated message #{id} from AI agent #{sender.id}"
+      return
+    end
+
+    Rails.logger.info "[MESSAGE] 📤 Proceeding with SendReplyJob for message #{id}"
     # FIXME: Giving it few seconds for the attachment to be uploaded to the service
     # active storage attaches the file only after commit
     attachments.blank? ? ::SendReplyJob.perform_later(id) : ::SendReplyJob.set(wait: 2.seconds).perform_later(id)

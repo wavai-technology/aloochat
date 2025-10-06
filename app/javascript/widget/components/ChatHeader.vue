@@ -84,6 +84,6 @@ export default {
         </div>
       </div>
     </div>
-    <HeaderActions :show-popout-button="showPopoutButton" />
+    <HeaderActions :show-popout-button="showPopoutButton" show-call-button />
   </header>
 </template>
