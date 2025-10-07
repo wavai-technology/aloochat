@@ -30,7 +30,33 @@ class Api::V1::Accounts::CallbacksController < Api::V1::Accounts::BaseController
   end
 
   def facebook_pages
-    @page_details = mark_already_existing_facebook_pages(fb_object.get_connections('me', 'accounts'))
+    Rails.logger.info "Facebook pages request with token: #{params[:omniauth_token].present? ? 'present' : 'missing'}"
+
+    fb_api = fb_object
+    Rails.logger.info 'Facebook API object created successfully'
+
+    pages_data = fb_api.get_connections('me', 'accounts')
+    Rails.logger.info "Facebook pages data retrieved: #{pages_data.length} pages found"
+
+    @page_details = mark_already_existing_facebook_pages(pages_data)
+    Rails.logger.info 'Page details processed successfully'
+  rescue Koala::Facebook::AuthenticationError => e
+    Rails.logger.error "Facebook authentication error: #{e.message}"
+    render json: {
+      success: false,
+      error: 'Facebook authentication failed. Please try reconnecting your Facebook account.',
+      details: e.message
+    }, status: :unauthorized
+    nil
+  rescue StandardError => e
+    Rails.logger.error "Error in facebook_pages: #{e.message}"
+    Rails.logger.error "Backtrace: #{e.backtrace.join('\n')}"
+    render json: {
+      success: false,
+      error: 'Failed to retrieve Facebook pages',
+      details: e.message
+    }, status: :internal_server_error
+    nil
   end
 
   def set_instagram_id(page_access_token, facebook_channel)
@@ -87,10 +113,25 @@ class Api::V1::Accounts::CallbacksController < Api::V1::Accounts::BaseController
   end
 
   def long_lived_token(omniauth_token)
-    koala = Koala::Facebook::OAuth.new(GlobalConfigService.load('FB_APP_ID', ''), GlobalConfigService.load('FB_APP_SECRET', ''))
-    koala.exchange_access_token_info(omniauth_token)['access_token']
+    Rails.logger.info 'Exchanging token for long-lived token'
+
+    fb_app_id = GlobalConfigService.load('FB_APP_ID', '')
+    fb_app_secret = GlobalConfigService.load('FB_APP_SECRET', '')
+
+    Rails.logger.info "FB_APP_ID present: #{fb_app_id.present?}"
+    Rails.logger.info "FB_APP_SECRET present: #{fb_app_secret.present?}"
+
+    raise 'Facebook App ID or App Secret not configured' if fb_app_id.blank? || fb_app_secret.blank?
+
+    koala = Koala::Facebook::OAuth.new(fb_app_id, fb_app_secret)
+    token_info = koala.exchange_access_token_info(omniauth_token)
+
+    Rails.logger.info 'Token exchange successful'
+    token_info['access_token']
   rescue StandardError => e
     Rails.logger.error "Error in long_lived_token: #{e.message}"
+    Rails.logger.error "Backtrace: #{e.backtrace.join('\n')}"
+    raise e # Re-raise the error so it can be handled by the calling method
   end
 
   def mark_already_existing_facebook_pages(data)
