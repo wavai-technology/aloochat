@@ -25,6 +25,9 @@ class Telegram::IncomingMessageService
 
     process_message_attachments if message_params?
     @message.save!
+
+    # Trigger AI response if conditions are met
+    Messages::AiResponseTriggerService.new(message: @message).perform
   end
 
   private

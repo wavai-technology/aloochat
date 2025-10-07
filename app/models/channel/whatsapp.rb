@@ -58,6 +58,11 @@ class Channel::Whatsapp < ApplicationRecord
   delegate :media_url, to: :provider_service
   delegate :api_headers, to: :provider_service
 
+  # Find WhatsApp channel by phone_number_id from provider_config
+  def self.find_by_phone_number_id(phone_number_id)
+    where("provider_config->>'phone_number_id' = ?", phone_number_id).first
+  end
+
   private
 
   def ensure_webhook_verify_token
