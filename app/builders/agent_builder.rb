@@ -42,7 +42,8 @@ class AgentBuilder
       # Prepare data for ALOOSTUDIO webhook
       first_name, last_name = (name || '').split(' ', 2)
       payload = {
-        firstName: first_name,
+        firstName: first_name, .
+        
         lastName: last_name,
         email: email,
         password: temp_password,
@@ -83,7 +84,7 @@ class AgentBuilder
   # @return [User] the created AI user.
   def create_ai_agent
     # Generate a unique, non-routable email for the AI agent
-    domain = account.domain.presence || 'a.bleep.ai'
+    domain = account.domain.presence || 'a.aloochat.ai'
     ai_email = "ai-agent-#{ai_agent_id}@#{domain}"
     Rails.logger.info "[AgentBuilder#create_ai_agent] Attempting to create AI agent with email: #{ai_email}"
 
